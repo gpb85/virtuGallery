@@ -9,7 +9,7 @@ import { authenticateToken } from "../middleware/authorization.js";
 
 const router = express.Router();
 
-router.get("/items", authenticateToken, getItems); // παίρνουμε όλα τα items του logged user
+router.get("/items/:id", authenticateToken, getItems); // παίρνουμε όλα τα items του logged user
 router.post("/createItem", authenticateToken, createItem);
 router.put("/update/:id", authenticateToken, updateItem);
 router.delete("/delete/:id", authenticateToken, deleteItem);

@@ -4,7 +4,9 @@ import pool from "../config/bd.js";
 
 export const getItems = async (req, res) => {
   try {
-    const userId = req.params.user_id;
+    const userId = req.params.id;
+    console.log(userId);
+
     const result = await pool.query(
       `SELECT * FROM items where user_id=$1 ORDER BY created_at DESC`,
       [userId]
@@ -35,8 +37,11 @@ export const createItem = async (req, res) => {
 export const updateItem = async (req, res) => {
   try {
     const userId = req.user.user_id;
+    console.log(userId);
+
     const { id } = req.params;
-    const { image_url } = req.body;
+    const image_url = req.body.image_url;
+    console.log();
 
     const result = await pool.query(
       `UPDATE items SET image_url=$1 WHERE item_id=$2 AND user_id=$3 RETURNING*`,
@@ -46,7 +51,11 @@ export const updateItem = async (req, res) => {
       return res
         .status(404)
         .json({ message: "Item not fount or item not yours" });
-    res.json(result.rows[0]);
+    res.json({
+      success: true,
+      data: result.rows[0],
+    });
+    console.log(res.json().data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -64,7 +73,7 @@ export const deleteItem = async (req, res) => {
     if (result.rowCount === 0) {
       res.status(404).json({ message: "Item not found or not yours" });
     }
-    res.json({ message: "item deleted", item: result.rows[0] });
+    res.json({ success: true, message: "item deleted", item: result.rows[0] });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
