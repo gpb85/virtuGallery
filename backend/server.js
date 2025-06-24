@@ -1,5 +1,4 @@
 import express from "express";
-import pool from "./config/bd.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
