@@ -1,10 +1,11 @@
 import pool from "../config/bd.js";
+import cloudinary from "../config/cloudinary.js";
 
 //GET items for logged_in user
 
-export const getItems = async (req, res) => {
+export const getItemsByUserId = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.user_id;
     //console.log("user1ID: ", userId);
 
     const result = await pool.query(
@@ -18,20 +19,53 @@ export const getItems = async (req, res) => {
   }
 };
 
+export const getItemById = async (req, res) => {
+  const itemId = req.params.item_id;
+
+  try {
+    const result = await pool.query(
+      `
+  SELECT 
+    i.item_id,
+    i.user_id,
+    i.image_url,
+    i.created_at,
+    t.language_code,
+    t.title,
+    t.description
+  FROM items i
+  JOIN item_translations t ON i.item_id = t.item_id
+  WHERE i.item_id = $1
+  `,
+      [itemId]
+    );
+
+    if (result.rowCount === 0)
+      return res.status(400).json({ message: "Item not found" });
+
+    res.status(200).json({ success: true, item: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 //POST insert new items
 
 export const insertItem = async (req, res) => {
   const userId = req.user.user_id;
-  // console.log(userId);
 
-  const { image_url, title, description, language_code } = req.body;
-  if (!image_url || !title || !description || !language_code)
+  const image_url = req.file.path;
+
+  const { title, description, language_code } = req.body;
+
+  if (!title || !description || !language_code)
     return res.status(400).json({ message: "Missing required fields" });
 
   const client = await pool.connect();
 
   try {
     //insert into item
+
     const insertItemResult = await client.query(
       `INSERT INTO items (user_id,image_url) VALUES($1,$2) RETURNING*`,
       [userId, image_url]
@@ -61,26 +95,45 @@ export const insertItem = async (req, res) => {
 //edit item
 
 export const patchItem = async (req, res) => {
-  const itemId = req.params.id;
-
-  const { image_url, title, description, language_code } = req.body;
-  // console.log("body: ", req.body);
-
   const client = await pool.connect();
 
   try {
+    const user_id = req.params.id;
+
+    const itemId = req.params.itemId;
+
+    if (!user_id || !itemId) throw new Error("Unknown");
+
     await client.query("BEGIN");
-    //console.log("image_url: ", image_url);
+
+    const item = await client.query(`SELECT * FROM items WHERE item_id=$1`, [
+      itemId,
+    ]);
+    //console.log("item: ", item.rows[0]);
+
+    if (item.rows[0].image_url) {
+      const filename = item.rows[0].image_url.split("/").pop();
+      const publicId = filename.split(".")[0];
+      if (publicId) {
+        cloudinary.uploader
+          .destroy(`VirtuGallery/${user_id}/${publicId}`)
+          .then((result) =>
+            console.log("Old profile image deleted result:", result)
+          );
+      }
+    }
+
+    const { title, description, language_code } = req.body;
 
     // 1. Ενημέρωση image_url αν υπάρχει
-    if (image_url !== undefined) {
+    const newImageUrl = req.file.path;
+
+    if (newImageUrl) {
       await client.query(`UPDATE items SET image_url = $1 WHERE item_id = $2`, [
-        image_url,
+        newImageUrl,
         itemId,
       ]);
     }
-
-    //console.log(title, description, language_code);
 
     // 2. Ενημέρωση μετάφρασης αν έχουν έρθει κάποια πεδία
     if ((title !== undefined || description !== undefined) && language_code) {
@@ -89,10 +142,7 @@ export const patchItem = async (req, res) => {
         [itemId, language_code]
       );
 
-      console.log(result.rows[0]);
-
       const current = result.rows[0];
-      console.log("current:", current);
 
       if (!current) {
         await client.query("ROLLBACK");
@@ -113,7 +163,7 @@ export const patchItem = async (req, res) => {
     res.status(200).json({ success: true, message: "Item updated" });
   } catch (error) {
     await client.query("ROLLBACK");
-    console.error(error);
+    console.error(error.message);
     res.status(500).json({ error: error.message });
   } finally {
     client.release();

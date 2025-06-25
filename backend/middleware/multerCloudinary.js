@@ -2,27 +2,33 @@ import cloudinary from "../config/cloudinary.js";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 
-// Storage for item images
 const itemImageStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "items_images", // Cloudinary folder
-    format: async (req, file) => {
-      const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-      if (!validTypes.includes(file.mimetype)) {
-        throw new Error("Only image files are allowed!");
-      }
+  cloudinary,
+  params: async (req, file) => {
+    // Μπορείς να πάρεις το userId είτε από params είτε από req.user (token)
+    const userId = req.params.id || req.user?.user_id || "anonymous";
 
-      return file.mimetype.split("/")[1]; // e.g. "jpeg"
-    },
-    public_id: (req, file) => {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      return `item-${uniqueSuffix}`;
-    },
+    console.log("User ID (middleware):", userId);
+
+    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+
+    if (!validTypes.includes(file.mimetype)) {
+      console.error("Invalid mimetype:", file.mimetype);
+      throw new Error("Only image files are allowed!");
+    }
+
+    const fileExt = file.mimetype.split("/")[1];
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    console.log("uniqueSUffix: ", uniqueSuffix);
+
+    return {
+      folder: `VirtuGallery/${userId}`,
+      format: fileExt,
+      public_id: `item-${uniqueSuffix}`,
+    };
   },
 });
 
-// Optional: Add extra validation using fileFilter
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -36,4 +42,4 @@ const itemImageUpload = multer({
   fileFilter,
 });
 
-export default itemImageUpload;
+export { itemImageUpload };
