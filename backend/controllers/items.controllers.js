@@ -6,21 +6,22 @@ import cloudinary from "../config/cloudinary.js";
 export const getItemsByUserId = async (req, res) => {
   try {
     const userId = req.params.user_id;
-    //console.log("user1ID: ", userId);
+    //console.log("userID: ", userId);
 
     const result = await pool.query(
       `SELECT * FROM items where user_id=$1 ORDER BY created_at DESC`,
       [userId]
     );
-    res.json({ items: result.rows });
+    res.json({ success: true, items: result.rows });
     // console.log("items: ", result.rows);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
 export const getItemById = async (req, res) => {
   const itemId = req.params.item_id;
+  console.log(itemId);
 
   try {
     const result = await pool.query(
@@ -39,6 +40,7 @@ export const getItemById = async (req, res) => {
   `,
       [itemId]
     );
+    console.log(result.rows[0]);
 
     if (result.rowCount === 0)
       return res.status(400).json({ message: "Item not found" });
@@ -52,11 +54,15 @@ export const getItemById = async (req, res) => {
 //POST insert new items
 
 export const insertItem = async (req, res) => {
-  const userId = req.user.user_id;
+  const user_id = req.user.user_id;
+
+  console.log("user_id: ", user_id);
 
   const image_url = req.file.path;
+  console.log(image_url);
 
   const { title, description, language_code } = req.body;
+  console.log(req.body);
 
   if (!title || !description || !language_code)
     return res.status(400).json({ message: "Missing required fields" });
@@ -98,9 +104,9 @@ export const patchItem = async (req, res) => {
   const client = await pool.connect();
 
   try {
-    const user_id = req.params.id;
+    const user_id = req.params.user_id;
 
-    const itemId = req.params.itemId;
+    const itemId = req.params.item_id;
 
     if (!user_id || !itemId) throw new Error("Unknown");
 
@@ -171,28 +177,51 @@ export const patchItem = async (req, res) => {
 };
 
 //DELETE item
-
 export const deleteItem = async (req, res) => {
-  const itemId = req.params.id;
+  const user_id = req.user.user_id;
+  const itemId = req.params.item_id;
+  console.log("user_id: ", user_id);
+  console.log("itemId: ", itemId);
+
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
-    const result = await client.query(`DELETE FROM items WHERE item_id = $1`, [
-      itemId,
-    ]);
+    // Βρες το item και έλεγξε τον ιδιοκτήτη
+    const itemResult = await client.query(
+      `SELECT user_id FROM items WHERE item_id = $1`,
+      [itemId]
+    );
 
-    if (result.rowCount === 0) {
+    if (itemResult.rowCount === 0) {
       await client.query("ROLLBACK");
-      return res.status(404).json({ message: "Item not found" }); // ✅ μόνο αν ΔΕΝ βρέθηκε
+      console.log("no item");
+      return res
+        .status(404)
+        .json({ success: false, message: "Item not found" });
     }
+
+    const itemOwnerId = itemResult.rows[0].user_id;
+
+    if (itemOwnerId !== user_id) {
+      await client.query("ROLLBACK");
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this item",
+      });
+    }
+
+    // Διαγραφή μεταφράσεων (προαιρετικά ή με ON DELETE CASCADE)
+
+    // Διαγραφή του item
+    await client.query(`DELETE FROM items WHERE item_id = $1`, [itemId]);
 
     await client.query("COMMIT");
 
     return res
       .status(200)
-      .json({ success: true, message: "Item deleted successfully" }); // ✅ σωστά τώρα στέλνει απάντηση
+      .json({ success: true, message: "Item deleted successfully" });
   } catch (error) {
     await client.query("ROLLBACK");
     return res.status(500).json({ error: error.message });

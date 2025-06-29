@@ -3,13 +3,16 @@ import {
   loginUser,
   refreshToken,
   deleteRefreshToken,
+  getLoggedUser,
 } from "../controllers/auth.controllers.js";
-import { authenticateToken } from "../middleware/authorization.js";
+import authToken from "../middleware/authToken.js";
 
 const router = express.Router();
 
 //login user
 router.post("/login", loginUser);
+
+router.get("/loggeduser", authToken, getLoggedUser);
 
 router.get("/refresh_token", refreshToken);
 

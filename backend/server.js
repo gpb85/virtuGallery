@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
 const corsOptions = {
   credentials: true,
-  origin: process.env.URL || "http://localhost:3000",
+  origin: process.env.CLIENT_URL,
 };
 
 //middleware

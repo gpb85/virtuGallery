@@ -7,9 +7,11 @@ import { jwtTokens } from "../utils/jwt.helpers.js";
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     const result = await pool.query(`SELECT * FROM users WHERE user_email=$1`, [
       email,
     ]);
+
     if (result.rows.length === 0)
       return res.status(401).json({ message: "Email is incorrect" });
 
@@ -19,13 +21,23 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Wrong password" });
 
     const tokens = jwtTokens(result.rows[0]);
+
     res.cookie("refresh_token", tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
     });
 
-    res.json(tokens);
+    res.json({
+      success: true,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        user_id: result.rows[0].user_id,
+        user_name: result.rows[0].user_name,
+        user_email: result.rows[0].user_email,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -66,6 +78,18 @@ export const deleteRefreshToken = (req, res) => {
       sameSite: "Strict",
     });
     return res.status(200).json({ message: "Refresh token has been deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getLoggedUser = async (req, res) => {
+  try {
+    const user = req.user;
+    //console.log(req.user);
+
+    if (!user) return res.status(401).json({ message: "No user logged in" });
+    res.json({ success: true, user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

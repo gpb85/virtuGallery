@@ -17,6 +17,7 @@ export const users = async (req, res) => {
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    console.log(req.body);
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -27,12 +28,22 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
+    const checkUsername = await pool.query(
+      `SELECT * FROM users WHERE user_name = $1`,
+      [username]
+    );
+    if (checkUsername.rowCount > 0) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Select other username" });
+    }
+
     const saltRounds = 10;
     const result = await pool.query(`SELECT * FROM users WHERE user_email=$1`, [
       email,
     ]);
     if (result.rows.length > 0) {
-      return res.status(409).json({ message: "Email already registered" });
+      return res.status(401).json({ message: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -44,8 +55,9 @@ export const registerUser = async (req, res) => {
 
     const { user_password, ...userWithoutPassword } = newUser.rows[0];
 
-    res.status(201).json({ newUser: userWithoutPassword });
+    res.status(201).json({ success: true, newUser: userWithoutPassword });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Register error:", error); // <== αυτό προσθέσέ το
+    res.status(500).json({ success: false, error: error.message });
   }
 };
