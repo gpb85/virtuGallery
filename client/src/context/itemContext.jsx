@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../config/configAuth.js";
 
-export const ItemCOntext = createContext();
+export const ItemContext = createContext();
 
 const ItemContextProvider = ({ children }) => {
   const [item, setItem] = useState(null);
@@ -15,7 +15,7 @@ const ItemContextProvider = ({ children }) => {
 
   const baseURL = import.meta.env.VITE_BASE_URL;
 
-  const getItemsByUser = async (user_id) => {
+  const getItemsByUser = async () => {
     try {
       const token = localStorage.getItem("accessToken");
       console.log(token);
@@ -57,33 +57,27 @@ const ItemContextProvider = ({ children }) => {
     }
   };
 
-  const newItem = async (
-    user_id,
-    image_url,
-    title,
-    description,
-    language_code
-  ) => {
+  const newItem = async (user_id, formData) => {
     try {
       const token = localStorage.getItem("accessToken");
       console.log("token: ", token);
+      console.log("user_id", user_id);
 
+      formData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+      });
       if (token) {
         const response = await axios.post(
           baseURL + `/auth/items/createitem/${user_id}`,
-          {
-            image_url,
-            title,
-            description,
-            language_code,
-          }
+          formData
         );
-        console.log(user_id);
 
         console.log("New item response:", response.data);
         if (response.data.success) {
           setNewItemMessage(response.data.message);
-          navigate("/"); // άλλαξέ το αν θες άλλο redirect
+          console.log("newitem: ", response.data);
+
+          // navigate("/"); // άλλαξέ το αν θες άλλο redirect
         }
       }
     } catch (error) {
@@ -139,7 +133,7 @@ const ItemContextProvider = ({ children }) => {
   };
 
   return (
-    <ItemCOntext.Provider
+    <ItemContext.Provider
       value={{
         userItems,
         newItemMessage,
@@ -154,7 +148,7 @@ const ItemContextProvider = ({ children }) => {
       }}
     >
       {children}
-    </ItemCOntext.Provider>
+    </ItemContext.Provider>
   );
 };
 

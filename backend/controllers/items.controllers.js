@@ -9,7 +9,18 @@ export const getItemsByUserId = async (req, res) => {
     console.log("user_id: ", user_id);
 
     const result = await pool.query(
-      `SELECT * FROM items WHERE user_id=$1 ORDER BY created_at DESC`,
+      `SELECT 
+         i.item_id,
+         i.user_id,
+         i.image_url,
+         i.created_at AS item_created_at,
+         it.language_code,    
+         it.title,
+         it.description
+       FROM items i
+       LEFT JOIN item_translations it ON i.item_id = it.item_id
+       WHERE i.user_id = $1
+       ORDER BY i.created_at DESC, it.language_code`,
       [user_id]
     );
     res.json({ success: true, items: result.rows });
@@ -60,12 +71,14 @@ export const insertItem = async (req, res) => {
   const user_id = req.user.user_id;
 
   console.log("user_id: ", user_id);
+  console.log("req.body:", req.body);
+  console.log("req.file", req.file);
 
   const image_url = req.file.path;
-  console.log(image_url);
+
+  console.log("image ulr", image_url);
 
   const { title, description, language_code } = req.body;
-  console.log(req.body);
 
   if (!title || !description || !language_code)
     return res.status(400).json({ message: "Missing required fields" });
@@ -77,7 +90,7 @@ export const insertItem = async (req, res) => {
 
     const insertItemResult = await client.query(
       `INSERT INTO items (user_id,image_url) VALUES($1,$2) RETURNING*`,
-      [userId, image_url]
+      [user_id, image_url]
     );
     const newItemId = insertItemResult.rows[0].item_id;
     //console.log(insertItemResult.rows[0]);
@@ -92,6 +105,7 @@ export const insertItem = async (req, res) => {
 
     res.status(201).json({
       success: true,
+
       message: "Item and translation created successfully",
     });
   } catch (error) {

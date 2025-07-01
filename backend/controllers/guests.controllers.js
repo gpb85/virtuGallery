@@ -5,9 +5,21 @@ export const getAllItemsByUserId = async (req, res) => {
     const user_id = req.params.user_id;
     // console.log("userId", user_id);
 
-    const result = await pool.query(`SELECT * FROM items WHERE user_id = $1`, [
-      user_id,
-    ]);
+    const result = await pool.query(
+      `SELECT 
+         i.item_id,
+         i.user_id,
+         i.image_url,
+         i.created_at AS item_created_at,
+         it.language_code,    
+         it.title,
+         it.description
+       FROM items i
+       LEFT JOIN item_translations it ON i.item_id = it.item_id
+       WHERE i.user_id = $1
+       ORDER BY i.created_at DESC, it.language_code`,
+      [user_id]
+    );
 
     if (result.rowCount === 0) {
       console.log("no items found");
@@ -30,8 +42,19 @@ export const userGetSpecificItem = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT * FROM items WHERE user_id=$1 AND item_id=$2`,
-      [user_id, item_id]
+      `SELECT 
+         i.item_id,
+         i.user_id,
+         i.image_url,
+         i.created_at AS item_created_at,
+         it.language_code,    
+         it.title,
+         it.description
+       FROM items i
+       LEFT JOIN item_translations it ON i.item_id = it.item_id
+       WHERE i.user_id = $1
+       ORDER BY i.created_at DESC, it.language_code`,
+      [user_id]
     );
     if (result.rowCount === 0) {
       console.log("no item found");

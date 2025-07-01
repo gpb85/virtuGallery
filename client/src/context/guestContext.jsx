@@ -24,6 +24,9 @@ const GuestContextProvider = ({ children }) => {
       console.error("Error fetching items:", error);
     }
   };
+  useEffect(() => {
+    getAllItemsByUser(1);
+  }, []);
 
   const getSpecificItem = async (user_id, item_id) => {
     try {
