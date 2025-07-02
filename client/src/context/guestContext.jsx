@@ -16,7 +16,7 @@ const GuestContextProvider = ({ children }) => {
       const result = await axios.get(baseURL + `/guests/items/${user_id}`);
       if (result.data.success) {
         setAllItems(result.data);
-        console.log(result.data);
+        // console.log(result.data);
       } else {
         console.log("No items found");
       }
@@ -24,9 +24,6 @@ const GuestContextProvider = ({ children }) => {
       console.error("Error fetching items:", error);
     }
   };
-  useEffect(() => {
-    getAllItemsByUser(1);
-  }, []);
 
   const getSpecificItem = async (user_id, item_id) => {
     try {
@@ -35,7 +32,7 @@ const GuestContextProvider = ({ children }) => {
       );
       if (response.data.success) {
         setSpecificItem(response.data.message);
-        console.log(response.data);
+        // console.log(response.data);
       } else {
         console.log("item did not found");
       }

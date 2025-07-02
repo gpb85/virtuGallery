@@ -61,7 +61,7 @@ export const userGetSpecificItem = async (req, res) => {
       return res.status(400).json({ success: false, message: "No item found" });
     }
     res.status(200).json({ success: true, item: result.rows[0] });
-    console.log(result.rows[0]);
+    //console.log(result.rows[0]);
   } catch (error) {
     console.error("DB error:", error);
     res.status(500).json({ success: false, error: error.message });

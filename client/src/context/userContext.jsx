@@ -23,7 +23,7 @@ const UserContextProvider = ({ children }) => {
 
       if (response.data.success) {
         navigate("/signin");
-        console.log("New User==>>", response.data.newUser);
+        // console.log("New User==>>", response.data.newUser);
       }
 
       //window.location.replace("/signedin");

@@ -6,7 +6,7 @@ import cloudinary from "../config/cloudinary.js";
 export const getItemsByUserId = async (req, res) => {
   try {
     const user_id = req.user.user_id;
-    console.log("user_id: ", user_id);
+    // console.log("user_id: ", user_id);
 
     const result = await pool.query(
       `SELECT 
@@ -24,7 +24,7 @@ export const getItemsByUserId = async (req, res) => {
       [user_id]
     );
     res.json({ success: true, items: result.rows });
-    console.log("items: ", result.rows);
+    //console.log("items: ", result.rows);
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -33,7 +33,7 @@ export const getItemsByUserId = async (req, res) => {
 export const getItemById = async (req, res) => {
   const user_id = req.user.user_id;
   const itemId = req.params.item_id;
-  console.log(itemId);
+  //console.log(itemId);
 
   try {
     const result = await pool.query(
@@ -52,7 +52,7 @@ export const getItemById = async (req, res) => {
   `,
       [itemId]
     );
-    console.log(result.rows[0]);
+    // console.log(result.rows[0]);
 
     if (result.rowCount === 0)
       return res
@@ -70,13 +70,13 @@ export const getItemById = async (req, res) => {
 export const insertItem = async (req, res) => {
   const user_id = req.user.user_id;
 
-  console.log("user_id: ", user_id);
-  console.log("req.body:", req.body);
-  console.log("req.file", req.file);
+  // console.log("user_id: ", user_id);
+  // console.log("req.body:", req.body);
+  // console.log("req.file", req.file);
 
   const image_url = req.file.path;
 
-  console.log("image ulr", image_url);
+  // console.log("image ulr", image_url);
 
   const { title, description, language_code } = req.body;
 
@@ -122,71 +122,99 @@ export const patchItem = async (req, res) => {
 
   try {
     const user_id = req.params.user_id;
-
     const itemId = req.params.item_id;
 
-    if (!user_id || !itemId) throw new Error("Unknown");
+    if (!user_id || !itemId) throw new Error("Unknown user or item ID");
 
     await client.query("BEGIN");
 
-    const item = await client.query(`SELECT * FROM items WHERE item_id=$1`, [
-      itemId,
-    ]);
-    //console.log("item: ", item.rows[0]);
-
-    if (item.rows[0].image_url) {
-      const filename = item.rows[0].image_url.split("/").pop();
-      const publicId = filename.split(".")[0];
-      if (publicId) {
-        cloudinary.uploader
-          .destroy(`VirtuGallery/${user_id}/${publicId}`)
-          .then((result) =>
-            console.log("Old profile image deleted result:", result)
-          );
-      }
+    // 1. Φέρε το υπάρχον item
+    const itemResult = await client.query(
+      `SELECT * FROM items WHERE item_id = $1`,
+      [itemId]
+    );
+    const existingItem = itemResult.rows[0];
+    if (!existingItem) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Item not found" });
     }
 
     const { title, description, language_code } = req.body;
 
-    // 1. Ενημέρωση image_url αν υπάρχει
-    const newImageUrl = req.file.path;
-
+    // 2. Ανέβηκε νέα εικόνα;
+    const newImageUrl = req.file?.path;
     if (newImageUrl) {
+      // Αν υπάρχει παλιά εικόνα, διαγράψ' την από το Cloudinary
+      if (existingItem.image_url) {
+        const filename = existingItem.image_url.split("/").pop();
+        const publicId = filename?.split(".")[0];
+        if (publicId) {
+          await cloudinary.uploader.destroy(
+            `VirtuGallery/${user_id}/${publicId}`
+          );
+        }
+      }
+
+      // Ενημέρωσε το image_url
       await client.query(`UPDATE items SET image_url = $1 WHERE item_id = $2`, [
         newImageUrl,
         itemId,
       ]);
     }
-
-    // 2. Ενημέρωση μετάφρασης αν έχουν έρθει κάποια πεδία
+    console.log("1", req.body.language_code);
+    // 3. Ενημέρωση μετάφρασης
     if ((title !== undefined || description !== undefined) && language_code) {
       const result = await client.query(
-        `SELECT * FROM item_translations WHERE item_id = $1 AND language_code = $2`,
-        [itemId, language_code]
+        `SELECT * FROM item_translations WHERE item_id = $1 `,
+        [itemId]
       );
+      console.log("2", req.body.language_code);
 
-      const current = result.rows[0];
+      const currentTranslation = result.rows[0];
+      console.log("curentTr", currentTranslation);
 
-      if (!current) {
+      if (!currentTranslation) {
         await client.query("ROLLBACK");
         return res.status(404).json({ error: "Translation not found" });
       }
 
-      const updatedTitle = title ?? current.title;
-      const updatedDescription = description ?? current.description;
+      const updatedTitle = title ?? currentTranslation.title;
+      const updatedDescription = description ?? currentTranslation.description;
+      const updatedLanguageCode =
+        language_code ?? currentTranslation.language_code;
 
       await client.query(
-        `UPDATE item_translations SET title = $1, description = $2 
-         WHERE item_id = $3 AND language_code = $4`,
-        [updatedTitle, updatedDescription, itemId, language_code]
+        `UPDATE item_translations SET title = $1, description = $2 ,language_code=$3
+         WHERE item_id = $4 `,
+        [updatedTitle, updatedDescription, updatedLanguageCode, itemId]
       );
     }
+    console.log("3", req.body.language_code);
+
+    // 4. Πάρε την ενημερωμένη εγγραφή και κάνε commit
+    const updatedItemResult = await client.query(
+      `SELECT 
+        i.item_id,
+        i.image_url,
+        t.title,
+        t.description,
+        t.language_code
+      FROM items i
+      JOIN item_translations t ON i.item_id = t.item_id
+      WHERE i.item_id = $1 AND t.language_code = $2`,
+      [itemId, language_code]
+    );
 
     await client.query("COMMIT");
-    res.status(200).json({ success: true, message: "Item updated" });
+
+    res.status(200).json({
+      success: true,
+      item: updatedItemResult.rows[0],
+      message: "Item updated successfully",
+    });
   } catch (error) {
     await client.query("ROLLBACK");
-    console.error(error.message);
+    console.error("patchItem error:", error.message);
     res.status(500).json({ error: error.message });
   } finally {
     client.release();
@@ -197,8 +225,8 @@ export const patchItem = async (req, res) => {
 export const deleteItem = async (req, res) => {
   const user_id = req.user.user_id;
   const itemId = req.params.item_id;
-  console.log("user_id: ", user_id);
-  console.log("itemId: ", itemId);
+  // console.log("user_id: ", user_id);
+  //console.log("itemId: ", itemId);
 
   const client = await pool.connect();
 

@@ -18,17 +18,17 @@ const ItemContextProvider = ({ children }) => {
   const getItemsByUser = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      console.log(token);
+      //console.log(token);
 
       if (token) {
         const response = await axios.get(baseURL + `/auth/items`);
-        console.log(response.data);
+        // console.log(response.data);
 
         if (response.data.success) {
           setUserItems(response.data.items);
           //navigate(`/`); //εδώ κάτι πρέπει να βάλω
         }
-        console.log("getAllItemsResponse: ", response.data);
+        //console.log("getAllItemsResponse: ", response.data);
       }
     } catch (error) {
       console.error("get item by user's id  error", error);
@@ -38,7 +38,7 @@ const ItemContextProvider = ({ children }) => {
   const getItemByItemId = async (item_id) => {
     try {
       const token = localStorage.getItem("accessToken");
-      console.log(token);
+      // console.log(token);
 
       if (token) {
         const response = await axios.get(
@@ -47,10 +47,8 @@ const ItemContextProvider = ({ children }) => {
 
         if (response.data.success) {
           setItem(response.data.item);
-
-          navigate("/"); //κι εδώ κάτι γράφω
         }
-        console.log("item by id :", response.data.item);
+        // console.log("item by id :", response.data.item);
       }
     } catch (error) {
       console.error("error", error);
@@ -60,22 +58,19 @@ const ItemContextProvider = ({ children }) => {
   const newItem = async (user_id, formData) => {
     try {
       const token = localStorage.getItem("accessToken");
-      console.log("token: ", token);
-      console.log("user_id", user_id);
+      // console.log("token: ", token);
+      //console.log("user_id", user_id);
 
-      formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-      });
       if (token) {
         const response = await axios.post(
           baseURL + `/auth/items/createitem/${user_id}`,
           formData
         );
 
-        console.log("New item response:", response.data);
+        // console.log("New item response:", response.data);
         if (response.data.success) {
           setNewItemMessage(response.data.message);
-          console.log("newitem: ", response.data);
+          //console.log("newitem: ", response.data);
 
           // navigate("/"); // άλλαξέ το αν θες άλλο redirect
         }
@@ -86,27 +81,21 @@ const ItemContextProvider = ({ children }) => {
     }
   };
 
-  const patchItem = async (
-    user_id,
-    item_id,
-    image_url,
-    title,
-    description,
-    language_code
-  ) => {
+  const patchItem = async (user_id, item_id, formData) => {
     try {
       const response = await axios.patch(
-        baseURL + `auth/items/patchitem/${user_id}/${item_id}`,
-        { image_url, title, description, language_code }
+        `${baseURL}/auth/items/patchitem/${user_id}/${item_id}`,
+        formData
       );
 
       if (response.data.success) {
         setUpdateItemMessage(response.data.message);
-        navigate("/"); //grapse kati
+        //console.log("updatedItem:", response.data.item);
+        navigate("/items"); // 🔄 ή όπου θέλεις
       }
-      console.log("updated item: ", response.data.success);
+      //console.log("updated item: ", response.data.success);
     } catch (error) {
-      setUpdateItemMessage("updated item error: ", error.message);
+      setUpdateItemMessage(`updated item error: ${error.message}`);
       console.error("update error", error);
     }
   };
@@ -124,7 +113,7 @@ const ItemContextProvider = ({ children }) => {
           setDeleteItemMessage(response.data.message);
           navigate("/"); //isos einai kai auto swsto
         }
-        console.log("response delete item: ", response.data.success);
+        //console.log("response delete item: ", response.data.success);
       }
     } catch (error) {
       setDeleteItemMessage("deleteItem error: ", error.message);
@@ -135,16 +124,17 @@ const ItemContextProvider = ({ children }) => {
   return (
     <ItemContext.Provider
       value={{
-        userItems,
-        newItemMessage,
-        deleteItemMessage,
-        updateItemMessage,
-
         getItemsByUser,
         getItemByItemId,
         newItem,
         patchItem,
         deleteItem,
+
+        item,
+        userItems,
+        newItemMessage,
+        deleteItemMessage,
+        updateItemMessage,
       }}
     >
       {children}

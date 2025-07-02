@@ -8,7 +8,7 @@ const itemImageStorage = new CloudinaryStorage({
     // Μπορείς να πάρεις το userId είτε από params είτε από req.user (token)
     const userId = req.params.id || req.user?.user_id || "anonymous";
 
-    console.log("User ID (middleware):", userId);
+    // console.log("User ID (middleware):", userId);
 
     const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
 
@@ -19,7 +19,7 @@ const itemImageStorage = new CloudinaryStorage({
 
     const fileExt = file.mimetype.split("/")[1];
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    console.log("uniqueSUffix: ", uniqueSuffix);
+    //console.log("uniqueSUffix: ", uniqueSuffix);
 
     return {
       folder: `VirtuGallery/${userId}`,

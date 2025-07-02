@@ -23,7 +23,7 @@ router.post(
 router.patch(
   "/items/patchitem/:user_id/:item_id",
   itemImageUpload.single("itemImage"),
-  authenticateToken,
+  authToken,
   patchItem
 );
 router.delete("/items/delete/:item_id", authToken, deleteItem);

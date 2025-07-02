@@ -37,11 +37,11 @@ const SignUp = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    console.log(
+    /* console.log(
       registerUserReqs.username,
       registerUserReqs.email,
       registerUserReqs.password
-    );
+    );*/
 
     register(
       registerUserReqs.username,
