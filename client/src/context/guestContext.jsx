@@ -1,24 +1,40 @@
 import { createContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "../config/configAuth.js";
 
 export const GuestContext = createContext();
 
 const GuestContextProvider = ({ children }) => {
-  const navigate = useNavigate();
   const baseURL = import.meta.env.VITE_BASE_URL;
 
-  const [allItems, setAllItems] = useState(null);
+  const [allUsers, setAllUsers] = useState(null);
+  const [allItems, setAllItems] = useState([]);
   const [specificItem, setSpecificItem] = useState(null);
+
+  const getAllUsers = async () => {
+    try {
+      const response = await axios.get(baseURL + `/guests/users`);
+
+      if (response.data.success) {
+        setAllUsers(response.data.users);
+      } else {
+        console.log("No users found");
+      }
+    } catch (error) {
+      "Error fetching users", error;
+    }
+  };
+  useEffect(() => {
+    getAllUsers(); // <-- Αυτό ήταν που έλειπε
+  }, []);
 
   const getAllItemsByUser = async (user_id) => {
     try {
       const result = await axios.get(baseURL + `/guests/items/${user_id}`);
       if (result.data.success) {
-        setAllItems(result.data);
+        setAllItems(result.data.items);
         // console.log(result.data);
       } else {
-        console.log("No items found");
+        console.log(result.data.message);
       }
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -31,8 +47,8 @@ const GuestContextProvider = ({ children }) => {
         `${baseURL}/guests/items/${user_id}/${item_id}`
       );
       if (response.data.success) {
-        setSpecificItem(response.data.message);
-        // console.log(response.data);
+        setSpecificItem(response.data.item);
+        console.log("setSpecificItem", response.data.item);
       } else {
         console.log("item did not found");
       }
@@ -44,9 +60,11 @@ const GuestContextProvider = ({ children }) => {
   return (
     <GuestContext.Provider
       value={{
+        allUsers,
         allItems,
         specificItem,
 
+        getAllUsers,
         getAllItemsByUser,
         getSpecificItem,
       }}

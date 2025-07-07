@@ -161,7 +161,7 @@ export const patchItem = async (req, res) => {
         itemId,
       ]);
     }
-    console.log("1", req.body.language_code);
+    //console.log("1", req.body.language_code);
     // 3. Ενημέρωση μετάφρασης
     if ((title !== undefined || description !== undefined) && language_code) {
       const result = await client.query(
@@ -171,7 +171,7 @@ export const patchItem = async (req, res) => {
       console.log("2", req.body.language_code);
 
       const currentTranslation = result.rows[0];
-      console.log("curentTr", currentTranslation);
+      //console.log("curentTr", currentTranslation);
 
       if (!currentTranslation) {
         await client.query("ROLLBACK");
@@ -189,7 +189,7 @@ export const patchItem = async (req, res) => {
         [updatedTitle, updatedDescription, updatedLanguageCode, itemId]
       );
     }
-    console.log("3", req.body.language_code);
+    //console.log("3", req.body.language_code);
 
     // 4. Πάρε την ενημερωμένη εγγραφή και κάνε commit
     const updatedItemResult = await client.query(
