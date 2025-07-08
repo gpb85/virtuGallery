@@ -1,8 +1,10 @@
+import "../css/SignUp.css";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/userContext.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const { register } = useContext(UserContext);
   const [registerUserReqs, setRegisterUserReqs] = useState({
     username: "",
@@ -51,39 +53,48 @@ const SignUp = () => {
   };
 
   return (
-    <div>
-      <div>register in page</div>
-      <div>
-        <Link to="/signin">page sign in</Link>
-        <form action="/register" onSubmit={handleClick} method="post">
-          <input
-            type="text"
-            name="username"
-            onChange={handleChange}
-            value={registerUserReqs.username}
-            placeholder="username"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            onChange={handleChange}
-            value={registerUserReqs.email}
-            placeholder="email"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            onChange={handleChange}
-            value={registerUserReqs.password}
-            placeholder="password"
-            required
-          />
+    <div className="register-container">
+      <h1 className="register-title">Καλωσήρθες δημιουργέ</h1>
+      <p className="register-subtext">
+        Δώσε τα στοιχεία σου και ξεκίνα να εκφράζεσαι.
+      </p>
 
-          <button type="submit">Register</button>
-        </form>
-      </div>
+      <Link to="/signin" className="signin-link">
+        Έχεις ήδη λογαριασμό; Είσοδος
+      </Link>
+
+      <form className="register-form" onSubmit={handleClick} method="post">
+        <input
+          type="text"
+          name="username"
+          className="input-field"
+          onChange={handleChange}
+          value={registerUserReqs.username}
+          placeholder="Ψευδώνυμο ή Όνομα"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          className="input-field"
+          onChange={handleChange}
+          value={registerUserReqs.email}
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          className="input-field"
+          onChange={handleChange}
+          value={registerUserReqs.password}
+          placeholder="Κωδικός"
+          required
+        />
+        <button type="submit" className="register-button">
+          Ξεκίνα
+        </button>
+      </form>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { ItemContext } from "../context/itemContext.jsx";
 import { UserContext } from "../context/userContext.jsx";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import "../css/EditItem.css";
 
 const EditItem = () => {
   const navigate = useNavigate();
@@ -70,10 +71,11 @@ const EditItem = () => {
   if (!item || !user) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="edit-container">
       <div>
         <h1>editPage</h1>
       </div>
+      <img src={item.image_url} alt="item img" />
       <form onSubmit={handleClick}>
         <input type="file" name="itemImage" onChange={handleChange} />
         <input

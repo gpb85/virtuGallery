@@ -1,0 +1,109 @@
+/* Βody dark background & default font color */
+body {
+  background-color: #12121a;
+  color: #e0e0e0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header: τίτλος + back link */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  background-color: #1b1b27;
+  border-bottom: 2px solid #2c2c3a;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #ffffff;
+}
+
+.header a {
+  text-decoration: none;
+  color: #66bfff;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.header a:hover {
+  text-decoration: underline;
+  color: #3399ff;
+}
+
+/* Container των items */
+.items-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  padding: 0 2rem 2rem 2rem;
+}
+
+/* Κάρτες με dark theme */
+.item-card {
+  cursor: pointer;
+  flex: 1 1 calc(25% - 2rem);
+  max-width: 300px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1b1b27;
+  border: 1px solid #2c2c3a;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.item-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.item-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  object-fit: contain;
+  background-color: #2a2a3a;
+  padding: 0.5rem;
+}
+
+.item-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.25rem;
+  color: #f1f1f1;
+  text-align: center;
+}
+
+.item-card p {
+  font-size: 0.95rem;
+  color: #c0c0d0;
+  text-align: center;
+  margin: 0;
+}
+
+/* Mobile: 1 κάρτα ανά σειρά */
+@media screen and (max-width: 600px) {
+  .item-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: auto;
+  }
+}
+
+/* Laptop: 3 κάρτες ανά σειρά */
+@media screen and (min-width: 768px) and (max-width: 1200px) {
+  .item-card {
+    flex: 1 1 calc(33.33% - 2rem);
+  }
+}

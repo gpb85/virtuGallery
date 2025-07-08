@@ -1,0 +1,144 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0d1c, #1c2134, #2d334a);
+  background-size: 400% 400%;
+  animation: spaceFlow 60s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  padding: 20px;
+}
+
+/* Background animation */
+@keyframes spaceFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Container */
+.register-container {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 0 40px rgba(200, 220, 255, 0.08);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-container:hover {
+  transform: scale(1.01);
+  box-shadow: 0 0 60px rgba(200, 220, 255, 0.12);
+}
+
+/* Τίτλος */
+.register-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+/* Υπότιτλος */
+.register-subtext {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #dcdcdc;
+}
+
+/* Link για signin */
+.signin-link {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 24px;
+  color: #a6a6cc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.signin-link:hover {
+  color: #ffffff;
+}
+
+/* Φόρμα */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Input πεδία */
+.input-field {
+  padding: 14px;
+  font-size: 15px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #dde5f8;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.input-field::placeholder {
+  color: #a9b1cc;
+}
+.input-field:focus {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  outline: none;
+}
+
+/* Κουμπί */
+.register-button {
+  padding: 14px;
+  font-size: 16px;
+  background: linear-gradient(90deg, #a4b1d9, #6c7ca6);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(150, 170, 220, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.register-button:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 22px rgba(180, 200, 255, 0.4);
+}
+
+/* Responsive behavior */
+@media (max-width: 480px) {
+  .register-container {
+    padding: 20px;
+  }
+
+  .register-title {
+    font-size: 20px;
+  }
+
+  .register-subtext {
+    font-size: 13px;
+  }
+
+  .input-field,
+  .register-button {
+    font-size: 14px;
+    padding: 12px;
+  }
+}

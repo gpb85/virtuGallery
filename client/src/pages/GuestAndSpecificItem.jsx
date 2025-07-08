@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { GuestContext } from "../context/guestContext";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import "../css/GuestAndSpecificItem.css";
 
 const GuestAndItem = () => {
   const { user_id, item_id } = useParams();
@@ -19,13 +20,15 @@ const GuestAndItem = () => {
   if (!specificItem) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h1>Specific {specificItem.title}</h1>
-      <div>
-        <h2>S{specificItem.title}</h2>
-        <img src={specificItem.image_url} alt="img" />
-        <p>{specificItem.description}</p>
-      </div>
+    <div className="item-container">
+      <div className="item-title">{specificItem.title}</div>
+      <img
+        src={specificItem.image_url}
+        alt={specificItem.title}
+        className="item-image"
+      />
+      <div className="item-description">{specificItem.description}</div>
+      <Link to={`/guests/users/${user_id}`}>Back</Link>
     </div>
   );
 };

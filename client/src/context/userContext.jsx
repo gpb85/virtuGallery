@@ -52,7 +52,7 @@ const UserContextProvider = ({ children }) => {
         setUser(response.data.user);
         localStorage.setItem("accessToken", response.data.accessToken);
 
-        navigate("/");
+        navigate("/allitems");
       } else {
         setLoginMessage(response.data.message);
       }

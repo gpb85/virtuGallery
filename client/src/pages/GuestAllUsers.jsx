@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { GuestContext } from "../context/guestContext.jsx";
 import { useNavigate } from "react-router-dom";
+import "../css/GuestAllUsers.css";
 
 const GuestGetUsers = () => {
   const { allUsers } = useContext(GuestContext);

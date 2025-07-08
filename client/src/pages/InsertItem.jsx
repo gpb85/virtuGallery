@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from "react";
 import { ItemContext } from "../context/itemContext.jsx";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../context/userContext.jsx";
+import "../css/InsertItem.css";
 
 const InsertItem = () => {
+  const navigate = useNavigate();
   const { newItem } = useContext(ItemContext);
   const { user } = useContext(UserContext);
   const [image, setImage] = useState(null);
@@ -34,6 +36,7 @@ const InsertItem = () => {
     formData.append("language_code", insertItemReqs.language_code);
     formData.append("itemImage", image);
     newItem(user?.user_id, formData);
+    navigate("/allitems");
     //console.log(formData);
 
     setInsertItemReqs({
@@ -45,36 +48,69 @@ const InsertItem = () => {
   };
 
   return (
-    <div>
-      <div>insert item page</div>
-      <form onSubmit={handleClick}>
-        <input type="file" name="itemImage" onChange={handleChange} />{" "}
+    <div className="insert-container">
+      <h2 className="insert-title">Προσθήκη Νέου Έργου</h2>
+      <form className="insert-form" onSubmit={handleClick}>
+        <label htmlFor="itemImage" className="insert-label">
+          Εικόνα
+        </label>
+        <input
+          type="file"
+          name="itemImage"
+          id="itemImage"
+          className="insert-input"
+          onChange={handleChange}
+          required
+        />
+
+        <label htmlFor="title" className="insert-label">
+          Τίτλος
+        </label>
         <input
           type="text"
           name="title"
-          onChange={handleChange}
+          id="title"
+          className="insert-input"
           value={insertItemReqs.title}
-          placeholder="Write the title"
+          onChange={handleChange}
+          placeholder="Π.χ. Τοπίο στο Φως"
           required
         />
+
+        <label htmlFor="description" className="insert-label">
+          Περιγραφή
+        </label>
         <input
           type="text"
           name="description"
-          onChange={handleChange}
+          id="description"
+          className="insert-input"
           value={insertItemReqs.description}
-          placeholder="Write the description"
+          onChange={handleChange}
+          placeholder="Σύντομη περιγραφή του έργου"
           required
         />
+
+        <label htmlFor="language_code" className="insert-label">
+          Γλώσσα
+        </label>
         <input
           type="text"
           name="language_code"
-          onChange={handleChange}
+          id="language_code"
+          className="insert-input"
           value={insertItemReqs.language_code}
+          onChange={handleChange}
+          placeholder="π.χ. el"
           maxLength={2}
           required
         />
-        <button type="submit">submit</button>
+
+        <button type="submit" className="insert-button">
+          Υποβολή
+        </button>
       </form>
+      <Link to={"/allitems"}>Back</Link>
     </div>
   );
 };

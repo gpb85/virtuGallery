@@ -1,0 +1,80 @@
+.insert-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 24px;
+  background: linear-gradient(to bottom, #1a1c2d, #11121c);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  color: #f0f0f0;
+  font-family: "Arial", sans-serif;
+}
+
+.insert-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+  color: #e6e6fa;
+  letter-spacing: 1px;
+}
+
+.insert-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.insert-label {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  color: #cfcff5;
+}
+
+.insert-input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #2a2d40;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: background 0.3s ease;
+}
+
+.insert-input::placeholder {
+  color: #888;
+}
+
+.insert-input:focus {
+  background: #363a50;
+}
+
+.insert-button {
+  margin-top: 12px;
+  padding: 12px;
+  background: #4a5ec2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.insert-button:hover {
+  background: #6478ff;
+}
+
+@media screen and (max-width: 480px) {
+  .insert-container {
+    margin: 20px 16px;
+    padding: 20px;
+  }
+
+  .insert-title {
+    font-size: 1.5rem;
+  }
+
+  .insert-button {
+    font-size: 0.95rem;
+  }
+}
