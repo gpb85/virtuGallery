@@ -23,7 +23,7 @@ function App() {
         <Route path="/insertitem" element={<InsertItem />} />
         <Route path="/allitems" element={<UserItems />} />
         <Route path="/edititem/:id" element={<EditItem />} />
-        <Route path="/guests/users" element={<GuestGetUsers />} />
+        <Route path="/" element={<GuestGetUsers />} />
         <Route path="/guests/users/:user_id" element={<GuestAndUser />} />
         <Route
           path="/guests/items/:user_id/:item_id"
