@@ -27,11 +27,11 @@ const GuestUser = () => {
         <Link to={`/guests/users`}>Back</Link>
       </div>
 
-      {allItems.length === 0 ? (
+      {allItems?.length === 0 ? (
         <p>No items found for this user.</p>
       ) : (
         <div className="items-container">
-          {allItems.map((item) => (
+          {allItems?.map((item) => (
             <div
               key={item.item_id}
               className="item-card"

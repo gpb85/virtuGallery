@@ -27,6 +27,15 @@ const GuestAndItem = () => {
         alt={specificItem.title}
         className="item-image"
       />
+      <div>
+        <ul>
+          {specificItem.translations?.map((item) => (
+            <li key={item.language_code} style={{ color: "white" }}>
+              {item.language_code}
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="item-description">{specificItem.description}</div>
       <Link to={`/guests/users/${user_id}`}>Back</Link>
     </div>

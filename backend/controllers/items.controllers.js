@@ -105,9 +105,11 @@ export const insertItem = async (req, res) => {
 
     res.status(201).json({
       success: true,
+      newItem: insertItemResult.rows[0],
 
       message: "Item and translation created successfully",
     });
+    // console.log(insertItemResult.rows[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

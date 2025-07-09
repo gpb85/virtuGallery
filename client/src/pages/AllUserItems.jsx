@@ -7,13 +7,12 @@ import "../css/UserItems.css";
 const UserItems = () => {
   const { user } = useContext(UserContext);
   const { userItems, getItemsByUser } = useContext(ItemContext);
-  console.log(userItems);
+  //console.log(userItems);
 
   useEffect(() => {
-    if (user) {
-      getItemsByUser(user.user_id);
-    }
-  }, [user]);
+    getItemsByUser(user?.user_id);
+    console.log("Test");
+  }, []);
 
   if (!user) return <p>Please log in to see your items.</p>;
   if (!userItems) return <p>loading items..</p>;

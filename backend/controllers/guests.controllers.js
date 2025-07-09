@@ -42,16 +42,15 @@ export const getAllItemsByUserId = async (req, res) => {
 
     //console.log(result.rows);
 
-    if (result.rowCount === 0) {
+    if (result.rowCount > 0) {
+      res.status(200).json({ success: true, items: result.rows });
+    } else {
       console.log("no items found");
-      return res.status(404).json({
-        success: false,
-        items: result.rows,
+      res.status(200).json({
+        success: true,
         message: "No items found",
       });
     }
-
-    res.status(200).json({ success: true, items: result.rows });
   } catch (error) {
     console.error("DB error:", error);
     res.status(500).json({ success: false, error: error.message });

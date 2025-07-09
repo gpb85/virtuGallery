@@ -2,6 +2,7 @@ import pool from "../config/bd.js";
 import bcrypt from "bcrypt";
 
 //get users
+/*
 export const users = async (req, res) => {
   try {
     const users = await pool.query(`SELECT * FROM  users`);
@@ -11,7 +12,7 @@ export const users = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+};*/
 
 //register user
 export const registerUser = async (req, res) => {

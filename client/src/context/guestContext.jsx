@@ -29,10 +29,11 @@ const GuestContextProvider = ({ children }) => {
 
   const getAllItemsByUser = async (user_id) => {
     try {
+      setAllItems([]);
       const result = await axios.get(baseURL + `/guests/items/${user_id}`);
-      if (result.data.success) {
+      if (result.data.success && result.data.items) {
         setAllItems(result.data.items);
-        // console.log(result.data);
+        console.log(result.data.items);
       } else {
         console.log(result.data.message);
       }

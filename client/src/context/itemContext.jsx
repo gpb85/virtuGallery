@@ -67,9 +67,13 @@ const ItemContextProvider = ({ children }) => {
           formData
         );
 
-        // console.log("New item response:", response.data);
+        console.log("New item response:", response.data);
         if (response.data.success) {
           setNewItemMessage(response.data.message);
+          await getItemsByUser(user_id); // αμέσως μετά το insert
+
+          console.log("Items User after new Item: ", userItems);
+
           //console.log("newitem: ", response.data);
 
           // navigate("/"); // άλλαξέ το αν θες άλλο redirect
