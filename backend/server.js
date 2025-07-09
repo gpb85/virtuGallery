@@ -16,14 +16,15 @@ const __dirName = dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
 const corsOptions = {
+  origin: process.env.CLIENT_URL || "https://virtu-galleryclient.vercel.app",
   credentials: true,
-  origin: process.env.CLIENT_URL,
 };
 
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(cookieParser());
 
 //paths
