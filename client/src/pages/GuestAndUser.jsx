@@ -24,7 +24,7 @@ const GuestUser = () => {
     <div>
       <div className="header">
         <h1>Items Gallery</h1>
-        <Link to={`/guests/users`}>Back</Link>
+        <Link to={`/`}>Back</Link>
       </div>
 
       {allItems?.length === 0 ? (
