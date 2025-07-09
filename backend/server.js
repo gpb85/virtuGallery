@@ -28,6 +28,10 @@ app.use(cookieParser());
 
 //paths
 app.use("/", express.static(join(__dirName, "public")));
+app.get("/hello", (req, res) => {
+  res.send("Hello from Express via Vercel!");
+});
+
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes, itemRoutes);
 app.use("/guests", guestsRoutes);
