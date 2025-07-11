@@ -16,7 +16,7 @@ const __dirName = dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "https://virtu-galleryclient.vercel.app",
+  origin: process.env.CLIENT_URL || "https:///virtu-galleryclient.vercel.app",
   credentials: true,
 };
 

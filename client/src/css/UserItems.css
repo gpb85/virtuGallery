@@ -1,6 +1,8 @@
+/* Container που περιέχει όλα τα items */
 .items-container {
   max-width: 1200px;
   width: 100%;
+  margin: 0 auto;
   background: repeating-radial-gradient(
       circle at 0 0,
       rgba(255, 255, 255, 0.05),
@@ -19,20 +21,33 @@
   backdrop-filter: saturate(180%) blur(12px);
 }
 
-/* Flex grid για τα items */
+/* Responsive Grid layout */
 .items-flex {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 28px;
-  justify-content: center;
+  justify-items: center;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .items-flex {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .items-flex {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* Κάρτα αντικειμένου */
 .item-card {
+  width: 100%;
+  max-width: 280px;
   background: linear-gradient(145deg, #c4b9b9, #e0f7fa);
   border-radius: 20px;
   overflow: hidden;
-  width: 280px;
   display: flex;
   flex-direction: column;
   box-shadow: 6px 6px 16px #b1d8db, -6px -6px 16px #ffffff;
@@ -59,13 +74,12 @@
   filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.18));
 }
 
-/* Περιεχόμενο της κάρτας */
+/* Περιεχόμενο κάρτας */
 .item-content {
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* ή space-between αν θες */
-  /* αφαίρεσε το height και το overflow */
+  justify-content: flex-start;
 }
 
 /* Τίτλος */
@@ -83,7 +97,7 @@
   color: #2a9d8f;
   white-space: normal;
   line-height: 1.4em;
-  max-height: 4.8em; /* 4 γραμμές */
+  max-height: 4.8em;
   overflow-y: hidden;
   transition: max-height 0.3s ease;
   position: relative;
@@ -92,19 +106,10 @@
 }
 
 .item-description.expanded {
-  max-height: 150px; /* ή 200px αν θες */
+  max-height: 150px;
   overflow-y: auto;
   cursor: auto;
 }
-
-/* Όταν expanded, μπορείς να προσθέσεις αυτή την κλάση (προαιρετικό) */
-/*
-.item-description.expanded {
-  max-height: 200px;
-  overflow-y: auto;
-  cursor: auto;
-}
-*/
 
 /* Σύνδεσμος επεξεργασίας */
 .edit-link {
@@ -122,7 +127,24 @@
   color: #023e8a;
 }
 
-/* Floating κουμπί + αν χρειαστεί */
+/* Κουμπί διαγραφής */
+.delete-button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #c1121f;
+}
+
+/* Floating κουμπί για προσθήκη (όταν υπάρχουν items) */
 .add-button-container {
   position: fixed;
   bottom: 24px;
@@ -151,18 +173,49 @@
   box-shadow: 0 8px 24px rgba(0, 150, 199, 0.7);
 }
 
-.delete-button {
-  margin-top: 8px;
-  padding: 8px 12px;
-  background-color: #e63946;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+/* Empty State (όταν δεν υπάρχουν αντικείμενα) */
+.empty-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  height: 50vh;
+  text-align: center;
 }
 
-.delete-button:hover {
-  background-color: #c1121f;
+.empty-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-message p {
+  font-size: 18px;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Μεγαλύτερο κουμπί στο κέντρο όταν δεν υπάρχουν items */
+.add-button.large {
+  width: 64px;
+  height: 64px;
+  font-size: 36px;
+}
+
+/* Responsive tweaks για κινητά */
+@media (max-width: 480px) {
+  .empty-container {
+    padding: 20px;
+  }
+
+  .empty-message p {
+    font-size: 16px;
+  }
+
+  .add-button.large {
+    width: 56px;
+    height: 56px;
+    font-size: 32px;
+  }
 }

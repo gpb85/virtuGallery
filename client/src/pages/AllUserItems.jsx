@@ -30,32 +30,48 @@ const UserItems = () => {
 
   return (
     <div className="items-container">
-      <div className="items-flex">
-        {userItems.map((item) => (
-          <div className="item-card" key={item.item_id}>
-            <img src={item.image_url} alt={item.title} className="item-image" />
-            <div className="item-content">
-              <h3 className="item-title">{item.title}</h3>
-              <ExpandableText text={item.description} />
-              <Link to={`/edititem/${item.item_id}`} className="edit-link">
-                Επεξεργασία
-              </Link>
-              <button
-                onClick={() => handleDelete(item.item_id)}
-                className="delete-button"
-              >
-                Διαγραφή
-              </button>
-            </div>
+      {userItems.length === 0 ? (
+        <div className="empty-container">
+          <div className="empty-message">
+            <p>Δεν υπάρχουν αντικείμενα.</p>
+            <Link to="/insertitem" className="add-button large">
+              +
+            </Link>
           </div>
-        ))}
-      </div>
-
-      <div className="add-button-container">
-        <Link to="/insertitem" className="add-button">
-          +
-        </Link>
-      </div>
+        </div>
+      ) : (
+        <>
+          <div className="items-flex">
+            {userItems.map((item) => (
+              <div className="item-card" key={item.item_id}>
+                <img
+                  src={item.image_url}
+                  alt={item.title}
+                  className="item-image"
+                />
+                <div className="item-content">
+                  <h3 className="item-title">{item.title}</h3>
+                  <ExpandableText text={item.description} />
+                  <Link to={`/edititem/${item.item_id}`} className="edit-link">
+                    Επεξεργασία
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(item.item_id)}
+                    className="delete-button"
+                  >
+                    Διαγραφή
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="add-button-container">
+            <Link to="/insertitem" className="add-button">
+              +
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   );
 };
