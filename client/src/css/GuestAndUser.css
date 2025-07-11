@@ -1,109 +1,108 @@
-/* Βody dark background & default font color */
-body {
-  background-color: #12121a;
-  color: #e0e0e0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-/* Header: τίτλος + back link */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  margin-bottom: 2rem;
-  background-color: #1b1b27;
-  border-bottom: 2px solid #2c2c3a;
+  background: #1c1b2e;
+  color: #f0f0f0;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header h1 {
-  margin: 0;
   font-size: 1.8rem;
-  color: #ffffff;
+  margin: 0;
 }
 
 .header a {
+  color: #aab6ff;
   text-decoration: none;
-  color: #66bfff;
-  font-weight: 500;
-  transition: color 0.2s;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
 }
 
 .header a:hover {
-  text-decoration: underline;
-  color: #3399ff;
+  color: #ffffff;
 }
 
-/* Container των items */
 .items-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-  padding: 0 2rem 2rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 40px 20px;
+  background: linear-gradient(to bottom, #0f0f1a, #1a1a2f);
+  min-height: 100vh;
 }
 
-/* Κάρτες με dark theme */
 .item-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  color: #f8f8ff;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  flex: 1 1 calc(25% - 2rem);
-  max-width: 300px;
-  min-width: 220px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #1b1b27;
-  border: 1px solid #2c2c3a;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .item-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.1);
 }
 
 .item-card img {
   width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 0.75rem;
+  height: 200px;
   object-fit: contain;
-  background-color: #2a2a3a;
-  padding: 0.5rem;
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 
 .item-card h3 {
   font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0.5rem 0 0.25rem;
-  color: #f1f1f1;
-  text-align: center;
+  margin: 10px 0 6px;
+  color: #e6e6fa;
 }
 
 .item-card p {
-  font-size: 0.95rem;
-  color: #c0c0d0;
-  text-align: center;
-  margin: 0;
+  font-size: 0.9rem;
+  color: #cfcff5;
+  line-height: 1.4;
 }
-
-/* Mobile: 1 κάρτα ανά σειρά */
-@media screen and (max-width: 600px) {
-  .item-card {
-    flex: 1 1 100%;
-    max-width: 100%;
-    min-width: auto;
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
   }
-}
 
-/* Laptop: 3 κάρτες ανά σειρά */
-@media screen and (min-width: 768px) and (max-width: 1200px) {
+  .header h1 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  .header a {
+    font-size: 0.85rem;
+  }
+
+  .items-container {
+    padding: 20px 10px;
+    grid-template-columns: 1fr; /* ένα item ανά σειρά */
+    gap: 16px;
+  }
+
   .item-card {
-    flex: 1 1 calc(33.33% - 2rem);
+    padding: 12px;
+  }
+
+  .item-card img {
+    height: 160px;
+  }
+
+  .item-card h3 {
+    font-size: 1rem;
+  }
+
+  .item-card p {
+    font-size: 0.85rem;
   }
 }
