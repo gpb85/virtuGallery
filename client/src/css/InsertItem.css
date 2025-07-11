@@ -1,10 +1,12 @@
 .insert-container {
   max-width: 500px;
+  max-height: 100vh; /* περιορίζει το ύψος στο ύψος της οθόνης */
+  overflow-y: auto; /* ενεργοποιεί το κάθετο σκρόλ όταν χρειάζεται */
   margin: 40px auto;
   padding: 24px;
-  background: linear-gradient(to bottom, #1a1c2d, #11121c);
+  background: linear-gradient(to bottom, #101011a6, #11121c25);
   border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   color: #f0f0f0;
   font-family: "Arial", sans-serif;
 }
@@ -76,5 +78,30 @@
 
   .insert-button {
     font-size: 0.95rem;
+  }
+}
+/* Ήδη έχεις responsive media query για max-width 480px */
+/* Προσθέτουμε λίγο πιο ευέλικτο πλάτος και μικρότερες αποστάσεις */
+
+@media screen and (max-width: 480px) {
+  .insert-container {
+    margin: 20px 12px;
+    padding: 16px;
+    max-width: 100%; /* Να καταλαμβάνει όλο το πλάτος της οθόνης */
+    max-height: 100vh; /* Ύψος περιορισμένο στην οθόνη */
+  }
+
+  .insert-title {
+    font-size: 1.4rem;
+  }
+
+  .insert-input {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+  }
+
+  .insert-button {
+    font-size: 0.9rem;
+    padding: 10px;
   }
 }

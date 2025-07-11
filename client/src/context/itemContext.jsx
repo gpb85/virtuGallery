@@ -58,8 +58,8 @@ const ItemContextProvider = ({ children }) => {
   const newItem = async (user_id, formData) => {
     try {
       const token = localStorage.getItem("accessToken");
-      // console.log("token: ", token);
-      //console.log("user_id", user_id);
+      console.log("token: ", token);
+      console.log("user_id", user_id);
 
       if (token) {
         const response = await axios.post(
@@ -107,21 +107,24 @@ const ItemContextProvider = ({ children }) => {
   const deleteItem = async (item_id) => {
     try {
       const token = localStorage.getItem("accessToken");
-      //console.log("token: ", token);
 
       if (token) {
         const response = await axios.delete(
           baseURL + `/auth/items/delete/${item_id}`
         );
+
         if (response.data.success) {
           setDeleteItemMessage(response.data.message);
-          navigate("/"); //isos einai kai auto swsto
+
+          // ✅ Αφαίρεσε το item τοπικά από το state
+          setUserItems((prevItems) =>
+            prevItems.filter((item) => item.item_id !== item_id)
+          );
         }
-        //console.log("response delete item: ", response.data.success);
       }
     } catch (error) {
       setDeleteItemMessage("deleteItem error: ", error.message);
-      console.error("delete  error", error);
+      console.error("delete error", error);
     }
   };
 

@@ -1,117 +1,168 @@
-/* Container */
 .items-container {
-  padding: 20px;
   max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  background: repeating-radial-gradient(
+      circle at 0 0,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.05) 2px,
+      transparent 2px,
+      transparent 8px
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(224, 247, 250, 0.85)
+    );
+  border-radius: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  padding: 40px 30px;
+  backdrop-filter: saturate(180%) blur(12px);
 }
 
-/* Header */
-.items-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.items-header h2 {
-  font-size: 24px;
-  color: #f0f0f0;
-}
-
-/* Flex wrapper */
+/* Flex grid για τα items */
 .items-flex {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 28px;
   justify-content: center;
 }
 
-/* Each card */
+/* Κάρτα αντικειμένου */
 .item-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 16px;
-  width: calc(33.333% - 20px);
+  background: linear-gradient(145deg, #c4b9b9, #e0f7fa);
+  border-radius: 20px;
+  overflow: hidden;
+  width: 280px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(100, 100, 150, 0.15);
-  transition: transform 0.3s ease;
+  box-shadow: 6px 6px 16px #b1d8db, -6px -6px 16px #ffffff;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .item-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 10px 10px 24px #a1c5c9, -10px -10px 24px #f7ffff;
 }
 
-/* Image */
+/* Εικόνα */
 .item-image {
   width: 100%;
-  height: 200px;
-  object-fit: contain;
-  background-color: #111624;
-  border-radius: 12px;
-  margin-bottom: 12px;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 2px solid #48cae4;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.12));
+  transition: filter 0.3s ease;
 }
 
-/* Content */
+.item-card:hover .item-image {
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.18));
+}
+
+/* Περιεχόμενο της κάρτας */
+.item-content {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* ή space-between αν θες */
+  /* αφαίρεσε το height και το overflow */
+}
+
+/* Τίτλος */
 .item-title {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 6px;
-}
-
-.item-description {
-  font-size: 0.9rem;
-  color: #ccc;
-  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1b4332;
   margin-bottom: 10px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
 }
 
-/* Edit button */
+/* Περιγραφή ExpandableText */
+.item-description {
+  font-size: 15px;
+  color: #2a9d8f;
+  white-space: normal;
+  line-height: 1.4em;
+  max-height: 4.8em; /* 4 γραμμές */
+  overflow-y: hidden;
+  transition: max-height 0.3s ease;
+  position: relative;
+  padding-right: 8px;
+  cursor: default;
+}
+
+.item-description.expanded {
+  max-height: 150px; /* ή 200px αν θες */
+  overflow-y: auto;
+  cursor: auto;
+}
+
+/* Όταν expanded, μπορείς να προσθέσεις αυτή την κλάση (προαιρετικό) */
+/*
+.item-description.expanded {
+  max-height: 200px;
+  overflow-y: auto;
+  cursor: auto;
+}
+*/
+
+/* Σύνδεσμος επεξεργασίας */
 .edit-link {
-  font-size: 0.85rem;
-  color: #a0c0ff;
+  align-self: flex-start;
+  margin-top: 12px;
+  font-size: 15px;
+  color: #0077b6;
   text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
 }
+
 .edit-link:hover {
-  color: #ffffff;
+  text-decoration: underline;
+  color: #023e8a;
 }
 
-/* Add button container */
+/* Floating κουμπί + αν χρειαστεί */
 .add-button-container {
-  margin-top: 40px;
-  display: flex;
-  justify-content: center;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10;
 }
 
-/* Add button */
 .add-button {
-  font-size: 2rem;
-  background-color: #3a4a7a;
+  width: 56px;
+  height: 56px;
+  background-color: #48cae4;
   color: white;
+  font-size: 32px;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   text-decoration: none;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 6px 16px rgba(72, 202, 228, 0.6);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
 }
 
 .add-button:hover {
-  background-color: #5367a0;
+  background-color: #0096c7;
+  box-shadow: 0 8px 24px rgba(0, 150, 199, 0.7);
 }
 
-/* Responsive */
-@media screen and (max-width: 768px) {
-  .item-card {
-    width: calc(50% - 20px);
-  }
+.delete-button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-@media screen and (max-width: 480px) {
-  .item-card {
-    width: 100%;
-  }
+.delete-button:hover {
+  background-color: #c1121f;
 }

@@ -33,5 +33,5 @@ function App() {
     </>
   );
 }
-//<Route path="/guests/item/:id/:id" element={</>}//>
+
 export default App;

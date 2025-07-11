@@ -3,10 +3,11 @@ import { UserContext } from "../context/userContext.jsx";
 import { ItemContext } from "../context/itemContext.jsx";
 import { Link } from "react-router-dom";
 import "../css/UserItems.css";
+import ExpandableText from "../components/ExpandTable.jsx";
 
 const UserItems = () => {
   const { user } = useContext(UserContext);
-  const { userItems, getItemsByUser } = useContext(ItemContext);
+  const { userItems, getItemsByUser, deleteItem } = useContext(ItemContext);
   //console.log(userItems);
 
   useEffect(() => {
@@ -17,6 +18,16 @@ const UserItems = () => {
   if (!user) return <p>Please log in to see your items.</p>;
   if (!userItems) return <p>loading items..</p>;
 
+  const handleDelete = (item_id) => {
+    const confirmed = window.confirm(
+      "Είσαι σίγουρος/η ότι θέλεις να διαγράψεις αυτό το έργο;"
+    );
+
+    if (confirmed) {
+      deleteItem(item_id); // Καλεί την υπάρχουσα deleteItem
+    }
+  };
+
   return (
     <div className="items-container">
       <div className="items-flex">
@@ -25,10 +36,16 @@ const UserItems = () => {
             <img src={item.image_url} alt={item.title} className="item-image" />
             <div className="item-content">
               <h3 className="item-title">{item.title}</h3>
-              <p className="item-description">{item.description}</p>
+              <ExpandableText text={item.description} />
               <Link to={`/edititem/${item.item_id}`} className="edit-link">
                 Επεξεργασία
               </Link>
+              <button
+                onClick={() => handleDelete(item.item_id)}
+                className="delete-button"
+              >
+                Διαγραφή
+              </button>
             </div>
           </div>
         ))}

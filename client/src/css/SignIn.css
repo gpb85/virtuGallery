@@ -1,170 +1,110 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Body */
-body {
-  font-family: "Helvetica Neue", sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(120deg, #0c0d1d, #1b1f2f, #2e344b);
-  background-size: 400% 400%;
-  animation: backgroundMoonDrift 50s ease infinite;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  padding: 20px;
-}
-
-/* Background animation */
-@keyframes backgroundMoonDrift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Κουτί */
 .signin-container {
-  width: 100%;
-  max-width: 420px;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(25px);
-  border-radius: 18px;
-  padding: 30px;
-  box-shadow: 0 0 40px rgba(180, 200, 255, 0.15);
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 32px 28px;
+  background: linear-gradient(145deg, #1a1a2e, #16213e);
+  border-radius: 20px;
+  box-shadow: 8px 8px 30px #0a0a19, -8px -8px 30px #2c2c54;
+  color: #e0e0f8;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.signin-container:hover {
-  transform: scale(1.01);
-  box-shadow: 0 0 60px rgba(180, 200, 255, 0.2);
 }
 
-/* Τίτλος */
-.signin-title {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 12px;
-  letter-spacing: 0.5px;
-  color: #ffffff;
+.signin-heading {
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #a1c4fd;
+  text-shadow: 0 0 8px #3a6ffb;
 }
 
-/* Υπότιτλος */
 .signin-subtext {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #dcdce8;
+  font-size: 1.1rem;
+  color: #c1c1e8;
+  margin-bottom: 16px;
+  font-style: italic;
 }
 
-/* Σύνδεσμος για SignUp */
 .signup-link {
-  display: inline-block;
-  font-size: 13px;
-  margin-bottom: 22px;
-  color: #aaa;
-  text-decoration: none;
+  color: #85aaff;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-bottom: 12px;
   transition: color 0.3s ease;
 }
+
 .signup-link:hover {
-  color: #fff;
+  color: #5171e0;
 }
 
-/* Φόρμα */
 .signin-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* Input πεδία */
 .input-field {
-  padding: 14px;
-  font-size: 15px;
-  border: none;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.07);
-  color: #dbe6ff;
-  backdrop-filter: blur(8px);
-  transition: background 0.3s, box-shadow 0.3s;
-}
-.input-field::placeholder {
-  color: #9ba6c4;
-}
-.input-field:focus {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
-  outline: none;
-}
-
-/* Κουμπί Σύνδεσης */
-.signin-button {
-  padding: 14px;
-  font-size: 16px;
-  background: linear-gradient(90deg, #7c8ea9, #39445e);
-  border: none;
+  padding: 12px 14px;
   border-radius: 12px;
-  color: white;
-  font-weight: bold;
+  border: none;
+  background-color: #23234b;
+  color: #d6d6f5;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: inset 3px 3px 6px #1b1b3e, inset -3px -3px 6px #2d2d68;
+  transition: background-color 0.3s ease;
+}
+
+.input-field::placeholder {
+  color: #9090bf;
+  font-style: italic;
+}
+
+.input-field:focus {
+  background-color: #2a2a69;
+  box-shadow: 0 0 8px #5271ff, inset 3px 3px 6px #1b1b3e,
+    inset -3px -3px 6px #2d2d68;
+}
+
+.submit-button {
+  margin-top: 12px;
+  padding: 14px 0;
+  background: linear-gradient(90deg, #3a6ffb, #5171e0);
+  border: none;
+  border-radius: 14px;
+  color: #e7e7ff;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(120, 140, 180, 0.3);
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.signin-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 24px rgba(150, 170, 200, 0.3);
+  box-shadow: 0 4px 12px #3a6ffb99, 0 0 10px #3a6ffbaa;
+  transition: background 0.4s ease;
 }
 
-/* ✅ Responsive adjustments */
-@media (max-width: 768px) {
-  .signin-container {
-    padding: 24px;
-  }
-
-  .signin-title {
-    font-size: 22px;
-  }
-
-  .signin-subtext {
-    font-size: 13px;
-  }
-
-  .input-field,
-  .signin-button {
-    font-size: 14px;
-    padding: 12px;
-  }
+.submit-button:hover {
+  background: linear-gradient(90deg, #5171e0, #3a6ffb);
+  box-shadow: 0 6px 16px #5171e099, 0 0 14px #5171e0aa;
 }
 
 @media (max-width: 480px) {
   .signin-container {
-    padding: 20px;
-    border-radius: 14px;
+    margin: 40px 16px;
+    padding: 24px 20px;
   }
 
-  .signin-title {
-    font-size: 20px;
+  .signin-heading {
+    font-size: 1.8rem;
   }
 
-  .signin-subtext {
-    font-size: 12px;
+  .input-field {
+    font-size: 0.95rem;
+    padding: 10px 12px;
   }
 
-  .signup-link {
-    font-size: 12px;
-  }
-
-  .input-field,
-  .signin-button {
-    font-size: 13px;
-    padding: 10px;
+  .submit-button {
+    font-size: 1rem;
   }
 }

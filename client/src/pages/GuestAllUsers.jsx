@@ -15,16 +15,15 @@ const GuestGetUsers = () => {
   }, [allUsers]);
 
   return (
-    <div>
-      <h1>Visitor, our artists are here!</h1>
+    <div className="guest-container">
+      <h1 className="guest-title">Visitor, our artists are here!</h1>
       {users.length === 0 ? (
-        <p>No users, sorry!</p>
+        <p className="guest-subtext">No users, sorry!</p>
       ) : (
-        <ul>
+        <ul className="user-list">
           {users.map((user) => (
             <li
               key={user.user_id}
-              style={{ cursor: "pointer" }}
               onClick={() => navigate(`/guests/users/${user.user_id}`)}
             >
               {user.user_name}
