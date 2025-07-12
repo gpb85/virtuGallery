@@ -3,15 +3,14 @@ import { ItemContext } from "../context/itemContext.jsx";
 import { UserContext } from "../context/userContext.jsx";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import imageCompression from "browser-image-compression";
 import "../css/EditItem.css";
 
 const EditItem = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  // console.log("itemID", id);
 
   const { item, getItemByItemId, patchItem } = useContext(ItemContext);
-
   const { user } = useContext(UserContext);
 
   const [image, setImage] = useState(null);
@@ -35,10 +34,27 @@ const EditItem = () => {
     }
   }, [item]);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
-    if (name === "itemImage") {
-      setImage(files[0]);
+
+    if (name === "itemImage" && files && files.length > 0) {
+      try {
+        const options = {
+          maxSizeMB: 1, // max μέγεθος μετά τη συμπίεση
+          maxWidthOrHeight: 1920, // max διαστάσεις εικόνας
+          useWebWorker: true,
+          fileType: "image/jpeg", // αναγκαστικά jpeg για καλύτερη συμπίεση
+        };
+        const compressedFile = await imageCompression(files[0], options);
+        setImage(compressedFile);
+        console.log(
+          `Compressed image size: ${compressedFile.size / 1024 / 1024} MB`
+        );
+      } catch (error) {
+        console.error("Image compression failed:", error);
+        // fallback: βάζουμε το αρχικό αρχείο αν αποτύχει η συμπίεση
+        setImage(files[0]);
+      }
     } else {
       setupdatedItemReqs((prevValue) => ({
         ...prevValue,
@@ -60,6 +76,7 @@ const EditItem = () => {
     formData.append("description", updatedItemReqs.description);
     formData.append("language_code", updatedItemReqs.language_code);
     if (image) formData.append("itemImage", image);
+
     try {
       await patchItem(user.user_id, id, formData);
       navigate("/allitems");

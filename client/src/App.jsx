@@ -35,3 +35,4 @@ function App() {
 }
 
 export default App;
+//https://dev.to/jakaria/how-to-upload-images-to-cloudinary-from-the-client-side-using-react-and-typescript-kbj

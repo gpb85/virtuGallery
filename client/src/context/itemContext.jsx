@@ -58,8 +58,8 @@ const ItemContextProvider = ({ children }) => {
   const newItem = async (user_id, formData) => {
     try {
       const token = localStorage.getItem("accessToken");
-      console.log("token: ", token);
-      console.log("user_id", user_id);
+      //console.log("token: ", token);
+      //console.log("user_id", user_id);
 
       if (token) {
         const response = await axios.post(
@@ -72,7 +72,7 @@ const ItemContextProvider = ({ children }) => {
           setNewItemMessage(response.data.message);
           await getItemsByUser(user_id); // αμέσως μετά το insert
 
-          console.log("Items User after new Item: ", userItems);
+          console.log("User just incerted a new item: ", userItems);
 
           //console.log("newitem: ", response.data);
 

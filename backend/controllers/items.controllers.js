@@ -71,8 +71,8 @@ export const insertItem = async (req, res) => {
   const user_id = req.user.user_id;
 
   // console.log("user_id: ", user_id);
-  // console.log("req.body:", req.body);
-  // console.log("req.file", req.file);
+  console.log("received body:", req.body);
+  console.log("received image", req.file);
 
   const image_url = req.file.path;
 

@@ -40,6 +40,7 @@ const fileFilter = (req, file, cb) => {
 const itemImageUpload = multer({
   storage: itemImageStorage,
   fileFilter,
+  limits: { fileSize: 12 * 1024 * 1024 },
 });
 
 export { itemImageUpload };
