@@ -24,21 +24,26 @@ const InsertItem = () => {
       const originalFile = files[0];
       if (!originalFile) return;
 
-      // Προαιρετικά μπορείς να βάλεις type-check εδώ
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1920,
         useWebWorker: true,
         fileType: "image/jpeg",
-        initialQuality: 0.9, // Πχ 85% ποιότητα, δοκίμασε και 0.9 αν θες πιο καθαρό αποτέλεσμα
+        initialQuality: 0.9,
       };
 
       try {
-        const compressedFile = await imageCompression(originalFile, options);
-        setImage(compressedFile);
+        // Συμπίεση μόνο αν το μέγεθος είναι πάνω από 4.3 MB
+        if (originalFile.size / 1024 / 1024 > 4.3) {
+          const compressedFile = await imageCompression(originalFile, options);
+          setImage(compressedFile);
+        } else {
+          setImage(originalFile);
+        }
       } catch (error) {
         console.error("Compression failed:", error);
         alert("Αποτυχία συμπίεσης εικόνας");
+        setImage(originalFile); // fallback
       }
     } else {
       setInsertItemReqs((prev) => ({

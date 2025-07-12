@@ -14,6 +14,7 @@ const EditItem = () => {
   const { user } = useContext(UserContext);
 
   const [image, setImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [updatedItemReqs, setupdatedItemReqs] = useState({
     title: "",
     description: "",
@@ -36,28 +37,33 @@ const EditItem = () => {
 
   const handleChange = async (e) => {
     const { name, value, files } = e.target;
+    if (name === "itemImage") {
+      const originalFile = files[0];
+      if (!originalFile) return;
 
-    if (name === "itemImage" && files && files.length > 0) {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+        fileType: "image/jpeg",
+        initialQuality: 0.9,
+      };
+
       try {
-        const options = {
-          maxSizeMB: 1, // max μέγεθος μετά τη συμπίεση
-          maxWidthOrHeight: 1920, // max διαστάσεις εικόνας
-          useWebWorker: true,
-          fileType: "image/jpeg", // αναγκαστικά jpeg για καλύτερη συμπίεση
-        };
-        const compressedFile = await imageCompression(files[0], options);
-        setImage(compressedFile);
-        console.log(
-          `Compressed image size: ${compressedFile.size / 1024 / 1024} MB`
-        );
+        if (originalFile.size / 1024 / 1024 > 4.3) {
+          const compressedFile = await imageCompression(originalFile, options);
+          setImage(compressedFile);
+        } else {
+          setImage(originalFile);
+        }
       } catch (error) {
-        console.error("Image compression failed:", error);
-        // fallback: βάζουμε το αρχικό αρχείο αν αποτύχει η συμπίεση
-        setImage(files[0]);
+        console.error("Compression failed:", error);
+        alert("Αποτυχία συμπίεσης εικόνας");
+        setImage(originalFile);
       }
     } else {
-      setupdatedItemReqs((prevValue) => ({
-        ...prevValue,
+      setupdatedItemReqs((prev) => ({
+        ...prev,
         [name]: value,
       }));
     }
@@ -66,10 +72,13 @@ const EditItem = () => {
   const handleClick = async (e) => {
     e.preventDefault();
 
+    if (isUploading) return;
     if (!user || !item) {
-      console.error("Missing user or item context");
+      alert("Ανεπαρκή δεδομένα χρήστη ή έργου");
       return;
     }
+
+    setIsUploading(true);
 
     const formData = new FormData();
     formData.append("title", updatedItemReqs.title);
@@ -81,7 +90,10 @@ const EditItem = () => {
       await patchItem(user.user_id, id, formData);
       navigate("/allitems");
     } catch (error) {
-      console.error("Failed to patch Items", error);
+      console.error("Failed to patch item", error);
+      alert("Αποτυχία ενημέρωσης έργου");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -90,27 +102,51 @@ const EditItem = () => {
   return (
     <div className="edit-container">
       <div>
-        <h1>editPage</h1>
+        <h1>Επεξεργασία Έργου</h1>
       </div>
-      <img src={item.image_url} alt="item img" />
+      <img
+        src={item.image_url}
+        alt="item img"
+        style={{ maxWidth: "100%", marginBottom: "20px" }}
+      />
       <form onSubmit={handleClick}>
-        <input type="file" name="itemImage" onChange={handleChange} />
+        <label htmlFor="itemImage" className="edit-label">
+          Εικόνα
+        </label>
+        <input
+          type="file"
+          name="itemImage"
+          id="itemImage"
+          onChange={handleChange}
+        />
+
+        <label htmlFor="title" className="edit-label">
+          Τίτλος
+        </label>
         <input
           type="text"
           name="title"
           onChange={handleChange}
           value={updatedItemReqs.title}
-          placeholder="Give a title"
+          placeholder="Δώσε τίτλο"
           required
         />
+
+        <label htmlFor="description" className="edit-label">
+          Περιγραφή
+        </label>
         <input
           type="text"
           name="description"
           onChange={handleChange}
           value={updatedItemReqs.description}
-          placeholder="Write something"
+          placeholder="Γράψε κάτι"
           required
         />
+
+        <label htmlFor="language_code" className="edit-label">
+          Γλώσσα
+        </label>
         <input
           type="text"
           name="language_code"
@@ -119,8 +155,12 @@ const EditItem = () => {
           maxLength={2}
           required
         />
-        <button type="submit">Submit</button>
+
+        <button type="submit" disabled={isUploading}>
+          {isUploading ? "Αποστολή..." : "Υποβολή"}
+        </button>
       </form>
+      <Link to={"/allitems"}>Πίσω</Link>
     </div>
   );
 };
