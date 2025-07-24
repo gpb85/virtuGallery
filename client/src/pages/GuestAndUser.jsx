@@ -14,7 +14,7 @@ const GuestUser = () => {
   const { allItems, getAllItemsByUser } = useContext(GuestContext);
 
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = true;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user_id) {
