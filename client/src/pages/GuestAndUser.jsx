@@ -6,37 +6,40 @@ import "../css/GuestAndUser.css";
 const GuestUser = () => {
   const { user_id } = useParams();
   const navigate = useNavigate();
-
   const { allItems, getAllItemsByUser } = useContext(GuestContext);
 
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await getAllItemsByUser(user_id); // περιμένουμε τα δεδομένα
+      setLoading(false); // Μόνο τότε λέμε "φόρτωσε"
+    };
+
     if (user_id) {
-      getAllItemsByUser(user_id); // Δεν κάνουμε setLoading(false) εδώ!
+      fetchData();
     }
   }, [user_id]);
 
   useEffect(() => {
     if (allItems.length > 0) {
       setUsername(allItems[0].user_name || "Unknown");
-      setLoading(false); // ✅ Τώρα που έχουμε δεδομένα, σταματάμε το loading
-    } else {
-      setLoading(false); // ✅ Ακόμα και αν δεν υπάρχουν items, σταματάμε loading
     }
   }, [allItems]);
 
+  // ✅ ΠΡΩΤΑ ελέγχεις loading
   if (loading) return <p>Loading...</p>;
 
   return (
     <div>
       <div className="header">
         <h1>{username} Gallery</h1>
-        <Link to={`/`}>Back</Link>
+        <Link to="/">Back</Link>
       </div>
 
-      {allItems?.length === 0 ? (
+      {allItems.length === 0 ? (
         <p>No items found for this user.</p>
       ) : (
         <div className="items-container">
