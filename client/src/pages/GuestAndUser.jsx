@@ -1,14 +1,10 @@
 import { useEffect, useContext, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { GuestContext } from "../context/guestContext.jsx";
-
 import "../css/GuestAndUser.css";
 
 const GuestUser = () => {
-  const { user_id } = useParams(); // παίρνουμε user id από το route param
-  // console.log("user_id", user_id);
-  //console.log("params:", useParams());
-
+  const { user_id } = useParams();
   const navigate = useNavigate();
 
   const { allItems, getAllItemsByUser } = useContext(GuestContext);
@@ -18,20 +14,20 @@ const GuestUser = () => {
 
   useEffect(() => {
     if (user_id) {
-      getAllItemsByUser(user_id);
+      getAllItemsByUser(user_id); // Δεν κάνουμε setLoading(false) εδώ!
     }
-  }, []);
+  }, [user_id]);
 
   useEffect(() => {
     if (allItems.length > 0) {
-      setUsername(allItems[0].user_name || "unknown");
-      setLoading(false); //got the items, stop loading
+      setUsername(allItems[0].user_name || "Unknown");
+      setLoading(false); // ✅ Τώρα που έχουμε δεδομένα, σταματάμε το loading
     } else {
-      setLoading(false); //in case we dont have items, stop loading
+      setLoading(false); // ✅ Ακόμα και αν δεν υπάρχουν items, σταματάμε loading
     }
   }, [allItems]);
 
-  if (loading) return <p>loading..</p>;
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div>
@@ -44,7 +40,7 @@ const GuestUser = () => {
         <p>No items found for this user.</p>
       ) : (
         <div className="items-container">
-          {allItems?.map((item) => (
+          {allItems.map((item) => (
             <div
               key={item.item_id}
               className="item-card"
