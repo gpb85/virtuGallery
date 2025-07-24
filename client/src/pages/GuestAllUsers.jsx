@@ -6,13 +6,19 @@ import "../css/GuestAllUsers.css";
 const GuestGetUsers = () => {
   const { allUsers } = useContext(GuestContext);
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (allUsers && Array.isArray(allUsers)) {
       setUsers(allUsers);
+      setLoading(false);
     }
   }, [allUsers]);
+
+  if (loading) {
+    return <p>loading..</p>; //loading indicator
+  }
 
   return (
     <div className="guest-container">
