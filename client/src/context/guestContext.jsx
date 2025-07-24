@@ -43,6 +43,7 @@ const GuestContextProvider = ({ children }) => {
   };
 
   const getSpecificItem = async (user_id, item_id) => {
+    setSpecificItem(null);
     try {
       const response = await axios.get(
         `${baseURL}/guests/items/${user_id}/${item_id}`

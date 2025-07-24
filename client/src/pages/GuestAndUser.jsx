@@ -11,14 +11,15 @@ const GuestUser = () => {
 
   const navigate = useNavigate();
 
-  const { allItems, getAllItemsByUser, loading, error } =
-    useContext(GuestContext);
+  const { allItems, getAllItemsByUser } = useContext(GuestContext);
 
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = true;
 
   useEffect(() => {
     if (user_id) {
       getAllItemsByUser(user_id);
+      setLoading(false);
     }
   }, []);
 
@@ -28,7 +29,7 @@ const GuestUser = () => {
     }
   }, [allItems]);
 
-  if (!allItems) return <p>loading items</p>;
+  if (loading) return <p>loading..</p>;
 
   return (
     <div>
