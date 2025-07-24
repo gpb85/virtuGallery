@@ -19,13 +19,15 @@ const GuestUser = () => {
   useEffect(() => {
     if (user_id) {
       getAllItemsByUser(user_id);
-      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (allItems.length > 0 && allItems[0].user_name) {
-      setUsername(allItems[0].user_name);
+    if (allItems.length > 0) {
+      setUsername(allItems[0].user_name || "unknown");
+      setLoading(false); //got the items, stop loading
+    } else {
+      setLoading(false); //in case we dont have items, stop loading
     }
   }, [allItems]);
 
