@@ -8,15 +8,15 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <GuestContextProvider>
-        <UserContextProvider>
-          <ItemContextProvider>
-            <App />
-          </ItemContextProvider>
-        </UserContextProvider>
-      </GuestContextProvider>
-    </BrowserRouter>
-  </StrictMode>
+  //<StrictMode>
+  <BrowserRouter>
+    <GuestContextProvider>
+      <UserContextProvider>
+        <ItemContextProvider>
+          <App />
+        </ItemContextProvider>
+      </UserContextProvider>
+    </GuestContextProvider>
+  </BrowserRouter>
+  // </StrictMode>
 );

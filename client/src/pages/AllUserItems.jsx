@@ -12,7 +12,7 @@ const UserItems = () => {
 
   useEffect(() => {
     getItemsByUser(user?.user_id);
-    console.log("Test");
+    // console.log("Test");
   }, []);
 
   if (!user) return <p>Please log in to see your items.</p>;

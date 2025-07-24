@@ -28,19 +28,21 @@ export const getAllItemsByUserId = async (req, res) => {
       `SELECT 
          i.item_id,
          i.user_id,
+         u.user_name,
          i.image_url,
          i.created_at AS item_created_at,
          it.language_code,    
          it.title,
          it.description
        FROM items i
+       JOIN users u ON i.user_id=u.user_id
        LEFT JOIN item_translations it ON i.item_id = it.item_id
        WHERE i.user_id = $1
        ORDER BY i.created_at DESC, it.language_code`,
       [user_id]
     );
 
-    //console.log(result.rows);
+    console.log(result.rows);
 
     if (result.rowCount > 0) {
       res.status(200).json({ success: true, items: result.rows });
