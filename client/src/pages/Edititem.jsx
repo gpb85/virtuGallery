@@ -135,12 +135,14 @@ const EditItem = () => {
         <label htmlFor="description" className="edit-label">
           Περιγραφή
         </label>
-        <input
+        <textarea
           type="text"
           name="description"
           onChange={handleChange}
           value={updatedItemReqs.description}
           placeholder="Γράψε κάτι"
+          cols={10}
+          rows={10}
           required
         />
 

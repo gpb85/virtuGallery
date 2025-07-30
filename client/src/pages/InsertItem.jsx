@@ -122,7 +122,7 @@ const InsertItem = () => {
         <label htmlFor="description" className="insert-label">
           Περιγραφή
         </label>
-        <input
+        <textarea
           type="text"
           name="description"
           id="description"
@@ -130,6 +130,8 @@ const InsertItem = () => {
           value={insertItemReqs.description}
           onChange={handleChange}
           placeholder="Σύντομη περιγραφή του έργου"
+          cols={10}
+          rows={3}
           required
         />
 

@@ -44,4 +44,22 @@ const createTables = async () => {
   }
 };
 
-createTables();
+const clearData = async () => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+    await client.query(
+      `TRUNCATE item_translations,items,users RESTART IDENTITY CASCADE`
+    );
+    await client.query("COMMIT");
+    console.log("all data have been deleted");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("❌ Σφάλμα στο καθάρισμα:", err);
+  } finally {
+    client.release();
+  }
+};
+
+clearData();
