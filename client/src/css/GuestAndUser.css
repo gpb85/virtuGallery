@@ -1,104 +1,282 @@
-/* ======= ΒΑΣΙΚΟ LAYOUT ======= */
-.items-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  padding: 30px 20px;
-  background: linear-gradient(to bottom, #0f0f1a, #1a1a2f);
+:root {
+  --radius: 14px;
+  --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+  --card-bg: #252741; /* σκούρο μπλε/μοβ για κάρτες */
+  --bg: #191a2f; /* νέο background της σελίδας */
+  --text-main: #e0e0ff; /* ανοιχτό γαλάζιο για κύριο κείμενο */
+  --text-muted: #9a9ab0; /* ανοιχτό γκρι-μοβ για δευτερεύον κείμενο */
+  --desc: #b0b0d0; /* απαλό γκρι-μοβ για περιγραφές */
+  --accent: #6c63ff; /* έντονο μωβ για links και highlights */
+  --transition: 0.2s ease;
+  --max-width: 420px;
+  --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
-.item-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  padding: 16px;
-  text-align: center;
-  color: #f8f8ff;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+* {
+  box-sizing: border-box;
 }
 
-.item-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.1);
+body {
+  margin: 0;
+  font-family: var(--font-stack);
+  background: var(--bg);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: hidden; /* αποφυγή οριζόντιου scroll */
 }
 
-.item-card img {
+.guest-wrapper {
   width: 100%;
-  height: auto;
-  max-height: 280px;
-  object-fit: contain;
-  border-radius: 12px;
-  margin-bottom: 12px;
+  max-width: min(1200px, 100vw);
+  margin: 0 auto;
+  padding: 24px 16px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  min-height: 100vh;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  overflow-wrap: break-word;
 }
 
-.item-card h3 {
-  font-size: 1.1rem;
-  margin: 10px 0 6px;
-  color: #e6e6fa;
-}
-
-/* ======= HEADER ======= */
-.header {
+/* Header */
+.gallery-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: #1c1b2e;
-  color: #f0f0f0;
-  padding: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: flex-start;
   flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
 }
 
-.header h1 {
-  font-size: 1.8rem;
+.gallery-title {
   margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text-main);
 }
 
-.header a {
-  color: #aab6ff;
+.gallery-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.back-link {
   text-decoration: none;
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 500;
+  align-self: center;
+}
+
+/* Card List */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 40px;
+  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Card βασική δομή */
+.card {
+  display: flex;
+  flex-direction: row;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px -8px rgba(108, 99, 255, 0.6);
+}
+
+.card-image-wrapper {
+  width: 40%;
+  overflow: hidden;
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+}
+
+.card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+}
+
+/* Περιεχόμενο κάρτας */
+.card-content {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 60%;
+  word-wrap: break-word;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.description {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: var(--desc);
+}
+
+.more-label {
+  font-weight: 600;
+  cursor: default;
+  color: var(--accent);
+  user-select: none;
+}
+
+/* Κενές / loading καταστάσεις */
+.placeholder-loading,
+.empty-state {
+  padding: 60px 16px;
+  text-align: center;
   font-size: 1rem;
-  transition: color 0.2s ease;
-  margin-top: 10px;
+  color: var(--text-muted);
+  width: 100%;
 }
 
-.header a:hover {
-  color: #ffffff;
+/* δείκτης κάτω δεξιά */
+.bottom-indicator {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  background: var(--accent);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  cursor: default;
 }
 
-/* ======= RESPONSIVE ΓΙΑ ΚΙΝΗΤΑ ΚΑΙ ΜΙΚΡΑ TABLETS ======= */
-@media screen and (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+.bottom-indicator svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--bg);
+  stroke-width: 2;
+  fill: none;
+}
+
+/* === Desktop / Laptop από 900px και πάνω === */
+@media (min-width: 900px) {
+  .guest-wrapper {
+    max-width: min(1200px, 100vw);
   }
 
-  .header h1 {
-    font-size: 1.5rem;
+  .card-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding-bottom: 0;
+    overflow-y: visible;
+    justify-items: center;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .header a {
-    font-size: 0.95rem;
-    margin-top: 0;
+  .card {
+    flex-direction: column; /* εικόνα πάνω, κείμενο κάτω */
+    min-height: unset;
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
   }
 
-  .items-container {
-    grid-template-columns: 1fr; /* μία στήλη για κινητό */
-    padding: 20px 12px;
-    gap: 16px;
+  .card-image-wrapper {
+    width: 100%;
+    border-radius: var(--radius) var(--radius) 0 0;
+    overflow: hidden;
   }
 
-  .item-card {
-    padding: 12px;
+  .card-image {
+    border-radius: var(--radius) var(--radius) 0 0;
+    aspect-ratio: 1 / 1;
   }
 
-  .item-card img {
-    max-height: 200px;
+  .card-content {
+    width: 100%;
+    padding: 12px 16px;
+  }
+}
+
+/* === Tablets / κινητά με πλάτος 600-899px === */
+@media (min-width: 600px) and (max-width: 899px) {
+  .card {
+    flex-direction: row;
+    border-radius: var(--radius);
+    min-height: 140px;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
   }
 
-  .item-card h3 {
-    font-size: 1rem;
+  .card-image-wrapper {
+    width: 40%;
+    border-radius: var(--radius) 0 0 var(--radius);
+    overflow: hidden;
+  }
+
+  .card-image {
+    border-radius: var(--radius) 0 0 var(--radius);
+    aspect-ratio: 1 / 1;
+  }
+
+  .card-content {
+    width: 60%;
+    padding: 12px 16px;
+  }
+}
+
+/* === Mobile κάτω από 600px === */
+@media (max-width: 599px) {
+  .card {
+    flex-direction: row;
+    border-radius: var(--radius);
+    min-height: 120px;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-image-wrapper {
+    width: 40%;
+    border-radius: var(--radius) 0 0 var(--radius);
+    overflow: hidden;
+  }
+
+  .card-image {
+    border-radius: var(--radius) 0 0 var(--radius);
+    aspect-ratio: 1 / 1;
+  }
+
+  .card-content {
+    width: 60%;
+    padding: 12px 16px;
   }
 }

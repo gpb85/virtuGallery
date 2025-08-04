@@ -1,14 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import { GuestContext } from "../context/guestContext";
 import { useParams, Link } from "react-router-dom";
-import ExpandedText from "../components/ExpandTable";
+
 import "../css/GuestAndSpecificItem.css";
 import ExpandableText from "../components/ExpandTable";
 
 const GuestAndItem = () => {
   const { user_id, item_id } = useParams();
   const { specificItem, getSpecificItem } = useContext(GuestContext);
-  const [showOverlay, setShowOverlay] = useState(false); // 👈 ΝΕΟ
+  const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
     if (user_id && item_id) {
@@ -20,7 +20,6 @@ const GuestAndItem = () => {
 
   return (
     <div className="item-container">
-      <div className="item-title">{specificItem.title}</div>
       <img
         src={specificItem.image_url}
         alt={specificItem.title}
@@ -47,7 +46,10 @@ const GuestAndItem = () => {
           ))}
         </ul>
       </div>
-      <ExpandableText text={specificItem.description} />
+      <div>
+        <h3>{specificItem.title}</h3>
+        <p>{specificItem.description}</p>
+      </div>
       <Link to={`/guests/users/${user_id}`}>Back</Link>
     </div>
   );
