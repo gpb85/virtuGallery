@@ -273,6 +273,7 @@ body {
 
   .card-image-wrapper {
     width: 40%;
+    margin-top: 10px;
     border-radius: var(--radius) 0 0 var(--radius);
     overflow: hidden;
   }
