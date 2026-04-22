@@ -1,10 +1,13 @@
 import pg from "pg";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const { Pool } = pg;
 
 const pool = new Pool({
-  connectionString:
-    "postgresql://postgres:ceBUkYcnDpcAzITXVQLHdhujxtKEbiKe@yamabiko.proxy.rlwy.net:12584/railway", // Βάλε Railway PostgreSQL URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
 const createTables = async () => {
@@ -41,25 +44,8 @@ const createTables = async () => {
     console.error("❌ Error creating tables:", err);
   } finally {
     client.release();
+    await pool.end();
   }
 };
 
-const clearData = async () => {
-  const client = await pool.connect();
-
-  try {
-    await client.query("BEGIN");
-    await client.query(
-      `TRUNCATE item_translations,items,users RESTART IDENTITY CASCADE`
-    );
-    await client.query("COMMIT");
-    console.log("all data have been deleted");
-  } catch (error) {
-    await client.query("ROLLBACK");
-    console.error("❌ Σφάλμα στο καθάρισμα:", err);
-  } finally {
-    client.release();
-  }
-};
-
-clearData();
+createTables();
