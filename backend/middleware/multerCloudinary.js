@@ -1,36 +1,13 @@
 import cloudinary from "../config/cloudinary.js";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
+import streamifier from "streamifier";
 
-const itemImageStorage = new CloudinaryStorage({
-  cloudinary,
-  params: async (req, file) => {
-    // Μπορείς να πάρεις το userId είτε από params είτε από req.user (token)
-    const userId = req.params.id || req.user?.user_id || "anonymous";
-
-    // console.log("User ID (middleware):", userId);
-
-    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-
-    if (!validTypes.includes(file.mimetype)) {
-      console.error("Invalid mimetype:", file.mimetype);
-      throw new Error("Only image files are allowed!");
-    }
-
-    const fileExt = file.mimetype.split("/")[1];
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    //console.log("uniqueSUffix: ", uniqueSuffix);
-
-    return {
-      folder: `VirtuGallery/${userId}`,
-      format: fileExt,
-      public_id: `item-${uniqueSuffix}`,
-    };
-  },
-});
+// Χρησιμοποιούμε memory storage αντί για disk (Vercel δεν έχει filesystem)
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
+  const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+  if (validTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(new Error("Only image files are allowed!"), false);
@@ -38,9 +15,31 @@ const fileFilter = (req, file, cb) => {
 };
 
 const itemImageUpload = multer({
-  storage: itemImageStorage,
+  storage,
   fileFilter,
   limits: { fileSize: 12 * 1024 * 1024 },
 });
 
-export { itemImageUpload };
+// Helper function για upload στο Cloudinary μέσω stream
+const uploadToCloudinary = (fileBuffer, userId, mimetype) => {
+  return new Promise((resolve, reject) => {
+    const fileExt = mimetype.split("/")[1];
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: `VirtuGallery/${userId}`,
+        format: fileExt,
+        public_id: `item-${uniqueSuffix}`,
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      },
+    );
+
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+  });
+};
+
+export { itemImageUpload, uploadToCloudinary };

@@ -1,11 +1,11 @@
 import pool from "../config/bd.js";
 import cloudinary from "../config/cloudinary.js";
+import { uploadToCloudinary } from "../middleware/multerCloudinary.js";
 
 // GET items for logged_in user
 export const getItemsByUserId = async (req, res) => {
   try {
     const user_id = req.user.user_id;
-
     const result = await pool.query(
       `SELECT 
          i.item_id,
@@ -28,9 +28,7 @@ export const getItemsByUserId = async (req, res) => {
 };
 
 export const getItemById = async (req, res) => {
-  const user_id = req.user.user_id;
   const itemId = req.params.item_id;
-
   try {
     const result = await pool.query(
       `SELECT 
@@ -46,12 +44,10 @@ export const getItemById = async (req, res) => {
       WHERE i.item_id = $1`,
       [itemId],
     );
-
     if (result.rowCount === 0)
       return res
         .status(400)
         .json({ success: false, message: "Item not found" });
-
     res.status(200).json({ success: true, item: result.rows[0] });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -61,16 +57,25 @@ export const getItemById = async (req, res) => {
 // POST insert new item
 export const insertItem = async (req, res) => {
   const user_id = req.user.user_id;
-  const image_url = req.file.path;
   const { title, description, language_code } = req.body;
 
   if (!title || !description || !language_code)
     return res.status(400).json({ message: "Missing required fields" });
 
+  if (!req.file) return res.status(400).json({ message: "Image is required" });
+
   const client = await pool.connect();
 
   try {
-    await client.query("BEGIN"); // ✅ Προστέθηκε BEGIN
+    // Upload εικόνα στο Cloudinary μέσω stream (Vercel compatible)
+    const cloudinaryResult = await uploadToCloudinary(
+      req.file.buffer,
+      user_id,
+      req.file.mimetype,
+    );
+    const image_url = cloudinaryResult.secure_url;
+
+    await client.query("BEGIN");
 
     const insertItemResult = await client.query(
       `INSERT INTO items (user_id, image_url) VALUES($1, $2) RETURNING *`,
@@ -101,7 +106,6 @@ export const insertItem = async (req, res) => {
 // PATCH edit item
 export const patchItem = async (req, res) => {
   const client = await pool.connect();
-
   try {
     const user_id = req.params.user_id;
     const itemId = req.params.item_id;
@@ -122,8 +126,7 @@ export const patchItem = async (req, res) => {
 
     const { title, description, language_code } = req.body;
 
-    const newImageUrl = req.file?.path;
-    if (newImageUrl) {
+    if (req.file) {
       if (existingItem.image_url) {
         const filename = existingItem.image_url.split("/").pop();
         const publicId = filename?.split(".")[0];
@@ -133,8 +136,13 @@ export const patchItem = async (req, res) => {
           );
         }
       }
+      const cloudinaryResult = await uploadToCloudinary(
+        req.file.buffer,
+        user_id,
+        req.file.mimetype,
+      );
       await client.query(`UPDATE items SET image_url = $1 WHERE item_id = $2`, [
-        newImageUrl,
+        cloudinaryResult.secure_url,
         itemId,
       ]);
     }
@@ -144,31 +152,24 @@ export const patchItem = async (req, res) => {
         `SELECT * FROM item_translations WHERE item_id = $1`,
         [itemId],
       );
-
       const currentTranslation = result.rows[0];
       if (!currentTranslation) {
         await client.query("ROLLBACK");
         return res.status(404).json({ error: "Translation not found" });
       }
-
-      const updatedTitle = title ?? currentTranslation.title;
-      const updatedDescription = description ?? currentTranslation.description;
-      const updatedLanguageCode =
-        language_code ?? currentTranslation.language_code;
-
       await client.query(
         `UPDATE item_translations SET title = $1, description = $2, language_code = $3 WHERE item_id = $4`,
-        [updatedTitle, updatedDescription, updatedLanguageCode, itemId],
+        [
+          title ?? currentTranslation.title,
+          description ?? currentTranslation.description,
+          language_code ?? currentTranslation.language_code,
+          itemId,
+        ],
       );
     }
 
     const updatedItemResult = await client.query(
-      `SELECT 
-        i.item_id,
-        i.image_url,
-        t.title,
-        t.description,
-        t.language_code
+      `SELECT i.item_id, i.image_url, t.title, t.description, t.language_code
       FROM items i
       JOIN item_translations t ON i.item_id = t.item_id
       WHERE i.item_id = $1 AND t.language_code = $2`,
@@ -176,7 +177,6 @@ export const patchItem = async (req, res) => {
     );
 
     await client.query("COMMIT");
-
     res.status(200).json({
       success: true,
       item: updatedItemResult.rows[0],
@@ -195,34 +195,26 @@ export const deleteItem = async (req, res) => {
   const user_id = req.user.user_id;
   const itemId = req.params.item_id;
   const client = await pool.connect();
-
   try {
     await client.query("BEGIN");
-
     const itemResult = await client.query(
       `SELECT user_id FROM items WHERE item_id = $1`,
       [itemId],
     );
-
     if (itemResult.rowCount === 0) {
       await client.query("ROLLBACK");
       return res
         .status(404)
         .json({ success: false, message: "Item not found" });
     }
-
-    const itemOwnerId = itemResult.rows[0].user_id;
-    if (itemOwnerId !== user_id) {
+    if (itemResult.rows[0].user_id !== user_id) {
       await client.query("ROLLBACK");
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized to delete this item",
-      });
+      return res
+        .status(403)
+        .json({ success: false, message: "Not authorized" });
     }
-
     await client.query(`DELETE FROM items WHERE item_id = $1`, [itemId]);
     await client.query("COMMIT");
-
     return res
       .status(200)
       .json({ success: true, message: "Item deleted successfully" });
