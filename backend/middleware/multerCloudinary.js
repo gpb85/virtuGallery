@@ -33,8 +33,12 @@ const uploadToCloudinary = (fileBuffer, userId, mimetype) => {
         public_id: `item-${uniqueSuffix}`,
       },
       (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
+        if (error) {
+          console.error("Cloudinary upload error:", JSON.stringify(error));
+          reject(new Error(JSON.stringify(error)));
+        } else {
+          resolve(result);
+        }
       },
     );
 
