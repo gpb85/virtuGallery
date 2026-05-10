@@ -1,0 +1,14 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Κάθε μέρα στις 8 πρωί
+  workflow_dispatch:  # Χειροκίνητη εκτέλεση αν χρειαστεί
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          psql "${{ secrets.DATABASE_URL }}" -c "SELECT 1;"
