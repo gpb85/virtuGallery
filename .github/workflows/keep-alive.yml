@@ -9,7 +9,17 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run ping
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          npx pg-simple-query "${{ secrets.DATABASE_URL }}" "SELECT 1"
-
+          npm install pg
+          node -e "
+          const { Pool } = require('pg');
+          const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+          pool.query('SELECT 1').then(() => { console.log('Supabase is alive!'); pool.end(); }).catch(err => { console.error(err); process.exit(1); });
+          "
