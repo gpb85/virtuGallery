@@ -2,8 +2,8 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # Κάθε μέρα στις 8 πρωί
-  workflow_dispatch:  # Χειροκίνητη εκτέλεση αν χρειαστεί
+    - cron: '0 8 * * *'
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -11,4 +11,5 @@ jobs:
     steps:
       - name: Ping Supabase
         run: |
-          psql "${{ secrets.DATABASE_URL }}" -c "SELECT 1;"
+          npx pg-simple-query "${{ secrets.DATABASE_URL }}" "SELECT 1"
+
